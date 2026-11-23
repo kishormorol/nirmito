@@ -34,7 +34,7 @@ const SKIP_FILES = new Set(["pnpm-lock.yaml", "package-lock.json", "yarn.lock"])
 const INSTRUCTIONS = `
 ## How you work here
 
-You cannot run commands. You see the workspace's files below and answer with JSON: every file you create or change, written out in full (not a diff), and every file you delete. Karigor writes them into the workspace and then runs the tests, lint and build itself, and shows you any failures on the next round.
+You cannot run commands. You see the workspace's files below and answer with JSON: every file you create or change, written out in full (not a diff), and every file you delete. Nirmito writes them into the workspace and then runs the tests, lint and build itself, and shows you any failures on the next round.
 
 - Paths are relative to the workspace root, with forward slashes.
 - Never write inside .git or node_modules, and never touch lock files.

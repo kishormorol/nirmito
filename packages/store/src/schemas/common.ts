@@ -54,7 +54,7 @@ export const GATE_NAMES = [
 export type GateName = (typeof GATE_NAMES)[number];
 export const GateNameSchema = z.enum(GATE_NAMES);
 
-/** Kinds of software Karigor can produce. Only `web-app` has a build crew so far. */
+/** Kinds of software Nirmito can produce. Only `web-app` has a build crew so far. */
 export const TARGET_PROFILES = {
   "web-app": "A website or web application with a backend and a database, used in a browser on phone or desktop.",
   "static-site": "A site with no backend: landing page, portfolio, documentation, simple forms via a hosted service.",

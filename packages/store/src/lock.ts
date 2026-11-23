@@ -34,7 +34,7 @@ export async function acquireRunLock(dir: string): Promise<() => Promise<void>> 
   const count = held.get(dir) ?? 0;
   if (count === 0) {
     const other = await runningPid(dir);
-    if (other) throw new ProjectBusyError(`Karigor is already working on this project (process ${other}); try again when it finishes`);
+    if (other) throw new ProjectBusyError(`Nirmito is already working on this project (process ${other}); try again when it finishes`);
     await ignoreInProjectGit(dir);
     await writeFile(lockPath(dir), `${process.pid}\n`, "utf8");
   }
@@ -54,7 +54,7 @@ export async function acquireRunLock(dir: string): Promise<() => Promise<void>> 
   };
 }
 
-/** The lock and the inbox are working files, not history; secrets Karigor keeps never enter it either. */
+/** The lock and the inbox are working files, not history; secrets Nirmito keeps never enter it either. */
 export async function ignoreInProjectGit(dir: string, lines: string[] = ["run.lock", "inbox/"]): Promise<void> {
   const f = join(dir, ".gitignore");
   const text = await readFile(f, "utf8").catch(() => "");
@@ -64,7 +64,7 @@ export async function ignoreInProjectGit(dir: string, lines: string[] = ["run.lo
 
 /** Refuse a change while a run is working on the project. */
 export async function assertIdle(dir: string, what: string): Promise<void> {
-  if (await runningPid(dir)) throw new ProjectBusyError(`Karigor is working on this project right now, so ${what} has to wait; try again when this round finishes`);
+  if (await runningPid(dir)) throw new ProjectBusyError(`Nirmito is working on this project right now, so ${what} has to wait; try again when this round finishes`);
 }
 
 /** Messages left while a run was busy; read and removed by the next one to look. */

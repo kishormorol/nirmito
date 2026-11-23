@@ -8,7 +8,7 @@ import { gitCommitter, keepOwnerSecret, ownerSecret } from "../src/index.js";
 
 const run = promisify(execFile);
 
-describe("the owner secret Karigor keeps", () => {
+describe("the owner secret Nirmito keeps", () => {
   it("is readable by this user only and never enters the project's git history", async () => {
     const dir = await mkdtemp(join(tmpdir(), "karigor-secret-"));
     await gitCommitter.init(dir);

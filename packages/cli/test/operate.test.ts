@@ -237,7 +237,7 @@ describe("scheduled jobs on a hosted app", () => {
 });
 
 describe("the owner's first link for a hosted app", () => {
-  it("asks the live app with the key Karigor kept, and says plainly when it cannot", async () => {
+  it("asks the live app with the key Nirmito kept, and says plainly when it cannot", async () => {
     const { FakeDeploy } = await import("@karigor/deploy");
     const { keepOwnerSecret } = await import("@karigor/store");
     const { adminLink } = await import("../src/index.js");
@@ -309,7 +309,7 @@ describe("errors in a hosted app's logs", { timeout: 120_000 }, () => {
 });
 
 describe("a service's first access key", () => {
-  it("asks the hosted service with the key Karigor kept, and never claims a key it did not get", async () => {
+  it("asks the hosted service with the key Nirmito kept, and never claims a key it did not get", async () => {
     const { FakeDeploy } = await import("@karigor/deploy");
     const { keepOwnerSecret } = await import("@karigor/store");
     const { ownerAccessKey } = await import("../src/index.js");
@@ -380,7 +380,7 @@ describe("a project keeps its kind of software", () => {
     const store = await FsStore.open(root, built, { committer: noopCommitter });
     await store.appendEvent({ type: "template-selected", by: "selector", template: "iterative", targetProfile: "static-site" });
     expect((await runOptions(root, built, { adapter: "claude-code", profile: "web-app", deploy: "none" })).profile?.name).toBe("static-site");
-    // a profile named on purpose (Karigor's own tests) is used as it is, with nothing else offered
+    // a profile named on purpose (Nirmito's own tests) is used as it is, with nothing else offered
     const pinned = await runOptions(root, built, { adapter: "claude-code", profile: "fixture", deploy: "none" });
     expect(pinned.profile?.name).toBe("fixture");
     expect(pinned.buildable).toBeUndefined();

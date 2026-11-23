@@ -59,13 +59,13 @@ export function phoneFiles(info: PhoneAppInfo): Record<string, string> {
     "phone.json": JSON.stringify({ name: info.name, shortName: info.shortName, url: start, packageId: info.packageId, themeColor: theme, backgroundColor: bg, icon: info.icon ?? "", versionCode: info.versionCode, versionName: info.versionName }, null, 2) + "\n",
     "README.md": `# ${info.name}: phone apps
 
-Made by Karigor. Both apps open ${start}; a new release of the app reaches the phones without a new build.
+Made by Nirmito. Both apps open ${start}; a new release of the app reaches the phones without a new build.
 
 - \`android/\`: the Android app (a Trusted Web Activity). The build makes \`app-release.aab\` for the Play Store and \`app-release.apk\` to install directly.
 - \`ios/\`: the iPhone app (a web view). The build makes a simulator app; an App Store build needs an Apple Developer account.
-- \`.github/workflows/phone-apps.yml\` builds both on every push. The Android signing key is a secret of this repository; Karigor keeps the original.
+- \`.github/workflows/phone-apps.yml\` builds both on every push. The Android signing key is a secret of this repository; Nirmito keeps the original.
 
-Karigor writes these files again each time it makes the apps; change the app itself, not these files.
+Nirmito writes these files again each time it makes the apps; change the app itself, not these files.
 `,
     ".gitignore": "build/\nout/\n.gradle/\nandroid/app/build/\nios/build/\nios/App.xcodeproj/\n*.p12\n*.jks\n",
     "scripts/icons.sh": ICONS_SH,
@@ -228,10 +228,10 @@ targets:
     <key>ITSAppUsesNonExemptEncryption</key><false/>
     <key>NSCameraUsageDescription</key><string>To take a photo to add in the app.</string>
     <key>NSPhotoLibraryUsageDescription</key><string>To choose a photo to add in the app.</string>
-    <key>KarigorAppURL</key><string>${plist(start)}</string>
-    <key>KarigorOfflineTitle</key><string>${plist(info.offline.title)}</string>
-    <key>KarigorOfflineText</key><string>${plist(info.offline.text)}</string>
-    <key>KarigorRetry</key><string>${plist(info.offline.retry)}</string>
+    <key>NirmitoAppURL</key><string>${plist(start)}</string>
+    <key>NirmitoOfflineTitle</key><string>${plist(info.offline.title)}</string>
+    <key>NirmitoOfflineText</key><string>${plist(info.offline.text)}</string>
+    <key>NirmitoRetry</key><string>${plist(info.offline.retry)}</string>
 </dict>
 </plist>
 `,
@@ -282,7 +282,7 @@ done
 echo "icons ready"
 `;
 
-const WORKFLOW = `# Builds the phone apps on every push. Written by Karigor; it is rewritten each time the apps are made.
+const WORKFLOW = `# Builds the phone apps on every push. Written by Nirmito; it is rewritten each time the apps are made.
 name: Phone apps
 on:
   push:
@@ -327,7 +327,7 @@ jobs:
         env:
           KEYSTORE_B64: \${{ secrets.ANDROID_KEYSTORE_B64 }}
         run: |
-          if [ -z "$KEYSTORE_B64" ]; then echo "The signing key secret is missing; make the apps again from Karigor."; exit 1; fi
+          if [ -z "$KEYSTORE_B64" ]; then echo "The signing key secret is missing; make the apps again from Nirmito."; exit 1; fi
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/upload.p12"
       - name: Build
         working-directory: android
@@ -380,10 +380,10 @@ import WebKit
 // (WhatsApp, maps, phone calls, email) opens in the app made for it.
 
 private func setting(_ key: String) -> String { Bundle.main.object(forInfoDictionaryKey: key) as? String ?? "" }
-private let appURL = URL(string: setting("KarigorAppURL"))!
+private let appURL = URL(string: setting("NirmitoAppURL"))!
 
 @main
-struct KarigorApp: App {
+struct NirmitoApp: App {
     var body: some Scene {
         WindowGroup { ContentView() }
     }
@@ -396,9 +396,9 @@ struct ContentView: View {
             WebView(model: model).ignoresSafeArea(.container, edges: .bottom)
             if model.offline {
                 VStack(spacing: 16) {
-                    Text(setting("KarigorOfflineTitle")).font(.title2).bold()
-                    Text(setting("KarigorOfflineText")).multilineTextAlignment(.center).foregroundStyle(.secondary)
-                    Button(setting("KarigorRetry")) { model.reload() }.buttonStyle(.borderedProminent)
+                    Text(setting("NirmitoOfflineTitle")).font(.title2).bold()
+                    Text(setting("NirmitoOfflineText")).multilineTextAlignment(.center).foregroundStyle(.secondary)
+                    Button(setting("NirmitoRetry")) { model.reload() }.buttonStyle(.borderedProminent)
                 }
                 .padding(32)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

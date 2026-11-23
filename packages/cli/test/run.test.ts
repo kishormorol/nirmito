@@ -17,7 +17,7 @@ async function fresh(idea = "A site where neighbours lend tools") {
 }
 
 describe("runProject: a person who reads Bangla", () => {
-  it("records a Bangla idea as Bangla, tells every agent, and writes Karigor's own decisions and story in Bangla", async () => {
+  it("records a Bangla idea as Bangla, tells every agent, and writes Nirmito's own decisions and story in Bangla", async () => {
     const { root: r, projectId } = await fresh("আমার এলাকার প্রতিবেশীরা যেন যন্ত্রপাতি ধার দিতে পারে");
     const systems: string[] = [];
     const adapter = scriptedAdapter({ override: (req) => void systems.push(req.system) });

@@ -1,7 +1,7 @@
 name: quick-edit
 description: Entered when every open request is a small edit the person made by pointing at the app. Plan, change, check, release, fast.
 fitsWhen: |
-  The project is released and every open work item is an edit made in Karigor's preview
+  The project is released and every open work item is an edit made in Nirmito's preview
   (move a part, change its words, swap a photo, change a colour). Never chosen for a new idea.
 initialPhase: triage
 limits:

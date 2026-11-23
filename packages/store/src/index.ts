@@ -9,3 +9,4 @@ export * from "./language.js";
 export * from "./given.js";
 export * from "./owner-secret.js";
 export * from "./platform.js";
+export * from "./old-name.js";

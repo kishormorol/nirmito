@@ -223,7 +223,7 @@ for (const btn of gateButtons) {
   });
 }
 
-// Needs you: each moment shows the card Karigor would show. The cards step through on their own while on screen,
+// Needs you: each moment shows the card Nirmito would show. The cards step through on their own while on screen,
 // until someone picks one; never with reduced motion.
 const moments = [...document.querySelectorAll(".moments button")];
 if (moments.length) {

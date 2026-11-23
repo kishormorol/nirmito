@@ -1,6 +1,6 @@
 /**
  * The statement Android checks before it opens this app's phone app full screen (without an address bar).
- * ANDROID_APP_LINKS is set by Karigor when it makes the phone apps: "<package>:<SHA-256 fingerprint>[,<fingerprint>…]".
+ * ANDROID_APP_LINKS is set by Nirmito when it makes the phone apps: "<package>:<SHA-256 fingerprint>[,<fingerprint>…]".
  */
 export function assetLinks(setting: string | undefined = process.env.ANDROID_APP_LINKS): unknown[] {
   const m = /^\s*([A-Za-z][\w.]*)\s*:\s*(.+)$/.exec(setting ?? "");

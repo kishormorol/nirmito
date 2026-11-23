@@ -19,7 +19,7 @@ Where things go:
 - \`DATABASE_URL\` keeps its local default in \`.env.example\`. The service's public address is \`process.env.SITE_URL\` (set by every deploy target; never ask for it).
 
 Built in and tested; build on them:
-- Access keys (\`src/server/keys.ts\`, table \`api_keys\`): a caller sends \`Authorization: Bearer key_…\`. Only a hash is stored; a key is shown once when made. Keys are made and turned off at \`/v1/keys\` (permission "manage keys") and on this computer with \`pnpm key:new "<who>" [scope]\`. Once hosted, Karigor asks \`POST /owner-key\` (guarded by OWNER_LINK_SECRET) for the owner's first key; keep that route and its setting as they are.
+- Access keys (\`src/server/keys.ts\`, table \`api_keys\`): a caller sends \`Authorization: Bearer key_…\`. Only a hash is stored; a key is shown once when made. Keys are made and turned off at \`/v1/keys\` (permission "manage keys") and on this computer with \`pnpm key:new "<who>" [scope]\`. Once hosted, Nirmito asks \`POST /owner-key\` (guarded by OWNER_LINK_SECRET) for the owner's first key; keep that route and its setting as they are.
 - A request log (table \`request_log\`, 30 days) of every \`/v1\` call: key, path, status, time taken. An endpoint the owner needs to see usage reads it.
 - CORS is open on \`/v1/*\` so a website's pages may call the service; the key is what protects data. A service meant only for one website may narrow \`origin\` in \`src/app.ts\`.
 - Data from the person: files they gave are in \`given/\` (never served). A price list or product list becomes the starting data through a migration or a seed function the first item writes and tests.
@@ -28,7 +28,7 @@ Tests: \`tests/*.test.ts\` with Vitest. Test each endpoint through \`testApi()\`
 
 Conventions:
 - Never hard-code secrets. Read configuration from \`process.env\` and document new variables in \`.env.example\`: a comment line saying what it is in plain words, then \`# karigor: generate\`, \`# karigor: ask\` or \`# karigor: service <name>\`, then \`NAME=\` with an empty value. Start the comment with "Optional:" when the service works without it. When the person reads Bangla, add a \`# bn: …\` line with the same words.
-- Karigor chooses the port. It starts every preview and release with the \`PORT\` setting, which \`src/serve.ts\` listens on; keep it that way. A service that fixes its own port fails the release.
+- Nirmito chooses the port. It starts every preview and release with the \`PORT\` setting, which \`src/serve.ts\` listens on; keep it that way. A service that fixes its own port fails the release.
 - \`/health\` is how deployments know the service is up. Keep it answering 200 and cheap; do not make it depend on the database.
 - Keep dependencies to what is installed unless an item truly needs more; if you add one, say why in your summary. Imports between files use the \`.js\` extension (\`./lib/money.js\`).
 - Do not touch files unrelated to the item.

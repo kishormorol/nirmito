@@ -1,10 +1,10 @@
 /**
  * The Netlify and Cloudflare Pages targets against real accounts: preview, go live, release again,
- * prove and perform a rollback, then delete what was made. Skipped unless KARIGOR_LIVE=1 and the
+ * prove and perform a rollback, then delete what was made. Skipped unless NIRMITO_LIVE=1 and the
  * target's token is set, so `pnpm test` stays free and offline.
  *
- *   KARIGOR_LIVE=1 NETLIFY_AUTH_TOKEN=... pnpm test packages/deploy/test/live.test.ts
- *   KARIGOR_LIVE=1 CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... pnpm test packages/deploy/test/live.test.ts
+ *   NIRMITO_LIVE=1 NETLIFY_AUTH_TOKEN=... pnpm test packages/deploy/test/live.test.ts
+ *   NIRMITO_LIVE=1 CLOUDFLARE_API_TOKEN=... CLOUDFLARE_ACCOUNT_ID=... pnpm test packages/deploy/test/live.test.ts
  *
  * Needs `pnpm`, and the `netlify` or `wrangler` CLI, on PATH. Each run makes a throwaway site named
  * karigor-live-<random> and deletes it at the end, even when a step fails.
@@ -17,7 +17,7 @@ import { fileURLToPath } from "node:url";
 import { afterAll, describe, expect, it } from "vitest";
 import { CloudflarePagesDeploy, NetlifyDeploy, type DeployAdapter, type DeployResult, type LiveRelease } from "../src/index.js";
 
-const LIVE = process.env["KARIGOR_LIVE"] === "1";
+const LIVE = process.env["NIRMITO_LIVE"] === "1";
 const SCAFFOLD = fileURLToPath(new URL("../../profiles/scaffolds/static-site", import.meta.url));
 const name = `karigor-live-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -25,7 +25,7 @@ const name = `karigor-live-${Math.random().toString(36).slice(2, 8)}`;
 async function site(dir: string, marker: string): Promise<string> {
   await writeFile(
     join(dir, "site", "index.html"),
-    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Karigor live check</title><meta name="description" content="A throwaway page from Karigor's live deploy check."></head><body><main><h1>${marker}</h1></main></body></html>\n`,
+    `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Nirmito live check</title><meta name="description" content="A throwaway page from Nirmito's live deploy check."></head><body><main><h1>${marker}</h1></main></body></html>\n`,
   );
   const git = (...a: string[]) => execFileSync("git", a, { cwd: dir, encoding: "utf8" }).trim();
   git("add", "-A");
@@ -49,7 +49,7 @@ async function serves(url: string, marker: string, tries = 20): Promise<boolean>
   return false;
 }
 
-/** The whole life of a release on one target, in the order Karigor drives it. */
+/** The whole life of a release on one target, in the order Nirmito drives it. */
 async function lifecycle(deploy: DeployAdapter) {
   const dir = await workspace();
   const release = async (n: number, marker: string): Promise<{ preview: DeployResult; live: DeployResult; version: string }> => {

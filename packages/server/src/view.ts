@@ -32,7 +32,7 @@ export interface ProjectView {
   signIn?: boolean;
   /** A service (api): its owner can get an access key here; `docs` is its docs page. */
   accessKey?: { docs?: string };
-  /** The live app carries Karigor's edit helper, so the person can change it by pointing at it in a preview. */
+  /** The live app carries Nirmito's edit helper, so the person can change it by pointing at it in a preview. */
   editable?: boolean;
   /** A web app online at an https address can have phone apps; their latest state when made. */
   phone?: { status: "none" | "building" | "ready" | "failed"; version?: string; files?: { path: string; bytes: number }[]; runUrl?: string; error?: string };
@@ -164,7 +164,7 @@ export async function listProjects(root: string): Promise<ProjectListing[]> {
   return out.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
-/** Phone apps are offered for a web app online at an https address. A build left "building" for over 90 minutes stopped (Karigor was restarted). */
+/** Phone apps are offered for a web app online at an https address. A build left "building" for over 90 minutes stopped (Nirmito was restarted). */
 async function phoneView(dir: string, state: ProjectState, url: string | undefined): Promise<ProjectView["phone"]> {
   if (!url || !/^https:\/\//.test(url) || (state.targetProfile && state.targetProfile !== "web-app")) return undefined;
   const s = await phoneState(dir);

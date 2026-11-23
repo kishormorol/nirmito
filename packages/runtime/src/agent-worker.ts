@@ -120,7 +120,7 @@ export async function runAgentWorker(c: AgentContract): Promise<AgentResult> {
     }
 
     const summary = firstLine(res.summary) || `work on ${itemId}`;
-    const commit = await c.workspace.commitAll(`karigor(${itemId}): ${summary}\n\nKarigor-Key: ${c.key}`);
+    const commit = await c.workspace.commitAll(`karigor(${itemId}): ${summary}\n\nNirmito-Key: ${c.key}`);
     if (!commit) {
       lastError = "the developer finished without changing any files";
       extra = section("Your previous attempt was rejected", "You reported being done, but no files changed. Implement the item by editing files in this workspace, add tests, and run them.");

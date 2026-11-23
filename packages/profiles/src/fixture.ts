@@ -8,7 +8,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 export const SCAFFOLDS_DIR = join(here, "..", "scaffolds");
 
 /**
- * For Karigor's own tests. No install. `node test.mjs` prints a Vitest-shaped report whose
+ * For Nirmito's own tests. No install. `node test.mjs` prints a Vitest-shaped report whose
  * counts come from `tests.json`, so a test scripts failures by editing that file.
  * `lint.mjs` fails if a `lint-fail` file exists; `build.mjs` fails if `build-fail` exists.
  * `serve.mjs` serves the release on `PORT`; its health check fails if `health-fail` exists, and it
@@ -17,7 +17,7 @@ export const SCAFFOLDS_DIR = join(here, "..", "scaffolds");
  */
 export const fixture: Profile = {
   name: "fixture",
-  description: "Offline fixture for Karigor's own tests.",
+  description: "Offline fixture for Nirmito's own tests.",
   scaffold: (dir) => copyScaffold(join(SCAFFOLDS_DIR, "fixture"), dir),
   commands: {
     test: ["node", "test.mjs"],

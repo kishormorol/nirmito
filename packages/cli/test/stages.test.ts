@@ -63,7 +63,7 @@ describe("stages", { timeout: 120_000 }, () => {
     let plan = await stagePlan(store, state);
     expect([...plan.built]).toEqual(["listing"]);
     expect(plan.next?.id).toBe("borrowing");
-    expect(await renderStatus(store, state)).toMatch(/\[built\] +Listing tools[\s\S]*\[later\] +Borrowing[\s\S]*karigor grow p1/);
+    expect(await renderStatus(store, state)).toMatch(/\[built\] +Listing tools[\s\S]*\[later\] +Borrowing[\s\S]*nirmito grow p1/);
 
     // Feedback left before growing is taken on by the stage.
     await recordSignals(store, [feedbackSignal("Show the owner's street")], NOW);

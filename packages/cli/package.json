@@ -28,6 +28,7 @@
     "@karigor/deploy": "workspace:*"
   },
   "bin": {
-    "karigor": "./dist/bin.js"
+    "karigor": "./dist/bin.js",
+    "nirmito": "./dist/bin.js"
   }
 }

@@ -140,7 +140,7 @@ export const selector: RoleDefinition<SelectorOutput> = {
   },
   async write(out, ctx) {
     const { target, fellBack } = buildableTarget(out.targetProfile, ctx.buildable);
-    // Written by Karigor itself, so in the person's language here; the selector's own reasons follow the language note.
+    // Written by Nirmito itself, so in the person's language here; the selector's own reasons follow the language note.
     const bn = (await ideaLanguage(ctx.state, ctx.store)) === "Bangla";
     const why = out.reasons.join(" ");
     const l = await ledgerWith(ctx, "selector", [
@@ -151,8 +151,8 @@ export const selector: RoleDefinition<SelectorOutput> = {
         reason: !fellBack
           ? why
           : bn
-            ? `সবচেয়ে মানানসই হতো ${TARGET_PROFILES_BN[out.targetProfile].slice(0, -1)}, যা Karigor এখনো তৈরি করতে পারে না, তাই এটিই সবচেয়ে কাছের ধরন। ${why}`
-            : `The best fit would be ${TARGET_PROFILES[out.targetProfile].charAt(0).toLowerCase()}${TARGET_PROFILES[out.targetProfile].slice(1, -1)}, which Karigor cannot build yet, so this is the closest kind it can. ${why}`,
+            ? `সবচেয়ে মানানসই হতো ${TARGET_PROFILES_BN[out.targetProfile].slice(0, -1)}, যা Nirmito এখনো তৈরি করতে পারে না, তাই এটিই সবচেয়ে কাছের ধরন। ${why}`
+            : `The best fit would be ${TARGET_PROFILES[out.targetProfile].charAt(0).toLowerCase()}${TARGET_PROFILES[out.targetProfile].slice(1, -1)}, which Nirmito cannot build yet, so this is the closest kind it can. ${why}`,
       },
       ...out.assumptions,
     ]);

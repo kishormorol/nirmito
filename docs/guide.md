@@ -1,31 +1,31 @@
-# Building an app with Karigor
+# Building an app with Nirmito
 
-This guide takes you from an idea to an app you can use, then shows how to change it, keep it running and put it online. You type a few commands; Karigor does the rest and never asks a technical question.
+This guide takes you from an idea to an app you can use, then shows how to change it, keep it running and put it online. You type a few commands; Nirmito does the rest and never asks a technical question.
 
 ## 1. Before you start (once)
 
 You need [Node.js](https://nodejs.org) 22 or newer, git, and [Claude Code](https://claude.com/claude-code) installed and signed in. Claude Code builds the app under your own login, so there is no API key and, on a subscription, nothing extra to pay.
 
 ```sh
-git clone https://github.com/kishormorol/karigor
-cd karigor
+git clone https://github.com/kishormorol/nirmito
+cd nirmito
 npm install -g pnpm        # if you do not have it
 pnpm install && pnpm build
-alias karigor="node $PWD/packages/cli/dist/bin.js"   # add this line to ~/.zshrc or ~/.bashrc to keep it
+alias nirmito="node $PWD/packages/cli/dist/bin.js"   # add this line to ~/.zshrc or ~/.bashrc to keep it
 ```
 
 No Claude Code? Use a free local model with `--adapter ollama`, or an API key with `--adapter claude` (see the [README](../README.md#build-for-real)). To watch the whole process without any model or cost, add `--adapter demo` to any command.
 
 ## 2. Describe your app
 
-The idea is the only thing Karigor needs, and it shapes everything that follows. Write it as you would explain it to a person who will build it for you. Say:
+The idea is the only thing Nirmito needs, and it shapes everything that follows. Write it as you would explain it to a person who will build it for you. Say:
 
 - **who uses it**, and what each kind of person may see or do;
 - **what it keeps track of** (orders, students, products, payments...);
 - **the jobs it must do**, in the words you use at work;
 - **local details** that matter: currency, language, payment methods, phone or computer.
 
-Karigor decides what kind of thing to build from your idea. Something people only look at (your shop's page, a menu, a portfolio, a wedding or event page) becomes a **simple website**: quick to build and free to keep online. Anything where people sign in, book, order or keep records becomes a **web app**. A service that other programs call, with no screens of its own (an API for a shop's phone app, prices for a partner's system), becomes a **service**: it comes with a docs page showing every call, and access keys for each program that uses it. Once it is online, press **Get an access key** on the chat page (or run `karigor access-key <id> "Your name"`); the key is shown once. The choice is shown among the decisions made for you. A project stays the kind it was first built as, so if the choice is wrong, start again and say it plainly in the idea ("just a simple website", "a web app where customers sign in", or "an API, no screens").
+Nirmito decides what kind of thing to build from your idea. Something people only look at (your shop's page, a menu, a portfolio, a wedding or event page) becomes a **simple website**: quick to build and free to keep online. Anything where people sign in, book, order or keep records becomes a **web app**. A service that other programs call, with no screens of its own (an API for a shop's phone app, prices for a partner's system), becomes a **service**: it comes with a docs page showing every call, and access keys for each program that uses it. Once it is online, press **Get an access key** on the chat page (or run `nirmito access-key <id> "Your name"`); the key is shown once. The choice is shown among the decisions made for you. A project stays the kind it was first built as, so if the choice is wrong, start again and say it plainly in the idea ("just a simple website", "a web app where customers sign in", or "an API, no screens").
 
 You can also give it files: on the chat page, press the paperclip beside the message box before you send. A logo or photos are used in the pages. A price list, product list or customer list (CSV, Excel, text) becomes the app's starting data. Pictures can be shown in the app; every other file stays private and is never put on the web. Files can be added later too, with a message saying what to do with them. Up to 30 files, 10 MB each.
 
@@ -51,14 +51,14 @@ receipt, and sees what is still owed. I, the owner, see each day's visits and ta
 with a chart for the month, and I add or remove staff.
 ```
 
-Karigor plans the whole product, then splits it into **stages** in the order they are built. Stage 1 is the smallest version someone can use end to end (for the clinic: register a patient and book a visit). Each later stage adds one area you would recognise ("Billing", "The owner's dashboard"). The first build makes stage 1; you add the rest with `karigor grow` (step 6). A small idea is just one stage.
+Nirmito plans the whole product, then splits it into **stages** in the order they are built. Stage 1 is the smallest version someone can use end to end (for the clinic: register a patient and book a visit). Each later stage adds one area you would recognise ("Billing", "The owner's dashboard"). The first build makes stage 1; you add the rest with `nirmito grow` (step 6). A small idea is just one stage.
 
-**Or start from a ready-made idea.** Karigor has ideas already written this way for common needs in Bangladesh: a shop counter, pharmacy, restaurant, online shop, cash book, invoices, parts stock, samity savings and loans, clinic, doctor's serial, school, madrasa, coaching centre, library, household visits, donors, staff and salaries, support tickets, leads, guest house, parcel delivery, internet billing, poultry farm, event registration, garment production, factory attendance and overtime, monthly health reports, hospital wards, community problem reports, office documents, a transport fleet, a distributor with sales reps, a farmers' cooperative, micro health insurance, salon bookings, surveys, SMS notices to groups, customer messages, a furniture workshop and installment (kisti) sales. Each one is modelled on a well-known open-source app.
+**Or start from a ready-made idea.** Nirmito has ideas already written this way for common needs in Bangladesh: a shop counter, pharmacy, restaurant, online shop, cash book, invoices, parts stock, samity savings and loans, clinic, doctor's serial, school, madrasa, coaching centre, library, household visits, donors, staff and salaries, support tickets, leads, guest house, parcel delivery, internet billing, poultry farm, event registration, garment production, factory attendance and overtime, monthly health reports, hospital wards, community problem reports, office documents, a transport fleet, a distributor with sales reps, a farmers' cooperative, micro health insurance, salon bookings, surveys, SMS notices to groups, customer messages, a furniture workshop and installment (kisti) sales. Each one is modelled on a well-known open-source app.
 
 ```sh
-karigor starters                  # list them
-karigor starters samity           # read one in full
-karigor new --starter samity "We collect every month, not every week. Members can also save for Eid." --run
+nirmito starters                  # list them
+nirmito starters samity           # read one in full
+nirmito new --starter samity "We collect every month, not every week. Members can also save for Eid." --run
 ```
 
 What you write after the starter's name is added to it as your changes, so say only what is different for you. In the chat UI, pick one under **Or start from a ready-made idea**, then type what is different for you, or send it as it is. The chat UI also speaks Bangla (the **বাংলা** button, chosen on its own for a Bangla browser): its screens, the progress messages and every ready-made idea are in Bangla, and a Bangla idea is built as written.
@@ -66,10 +66,10 @@ What you write after the starter's name is added to it as your changes, so say o
 ## 3. Start the build
 
 ```sh
-karigor new "your idea here" --run --port 3300
+nirmito new "your idea here" --run --port 3300
 ```
 
-`--port` chooses the address the app gets on your computer (here http://localhost:3300); give each app its own. Karigor prints the project's id (like `p-mvin1bja-92f2`) — keep it, every other command needs it.
+`--port` chooses the address the app gets on your computer (here http://localhost:3300); give each app its own. Nirmito prints the project's id (like `p-mvin1bja-92f2`) — keep it, every other command needs it.
 
 What happens next, with no input from you:
 
@@ -82,44 +82,44 @@ What happens next, with no input from you:
 A stage usually takes a few hours. You can close nothing and leave it running; to see where it is from another terminal:
 
 ```sh
-karigor status <id>       # where it stands, in plain words
-karigor explain <id>      # the story so far
-karigor cost <id>         # what it has used
+nirmito status <id>       # where it stands, in plain words
+nirmito explain <id>      # the story so far
+nirmito cost <id>         # what it has used
 ```
 
 **If it stops.** Every step is saved, so nothing is lost:
 
 | What you see | What to do |
 |---|---|
-| It paused because your Claude usage limit ran out | `karigor resume <id> --wait` tries again every 30 minutes until it can carry on. The chat UI and `karigor serve` do this on their own |
-| Your computer slept, the terminal closed, or it crashed | `karigor resume <id>` |
-| `status` says it is waiting for a setting | `karigor setup <id>` (step 4) |
-| It stopped with pieces of work set aside ("parked") | `karigor reopen <id>`, then `karigor resume <id>` |
+| It paused because your Claude usage limit ran out | `nirmito resume <id> --wait` tries again every 30 minutes until it can carry on. The chat UI and `nirmito serve` do this on their own |
+| Your computer slept, the terminal closed, or it crashed | `nirmito resume <id>` |
+| `status` says it is waiting for a setting | `nirmito setup <id>` (step 4) |
+| It stopped with pieces of work set aside ("parked") | `nirmito reopen <id>`, then `nirmito resume <id>` |
 
 ## 4. Give it what only you can provide
 
-Some apps need things only you can choose or own: the owner's email, a passcode, a key for an email service, a database account. Karigor makes its own secrets (like signing keys) itself, and asks you for the rest in plain words:
+Some apps need things only you can choose or own: the owner's email, a passcode, a key for an email service, a database account. Nirmito makes its own secrets (like signing keys) itself, and asks you for the rest in plain words:
 
 ```sh
-karigor setup <id>
+nirmito setup <id>
 ```
 
-It hides what you type, stores values only where the app runs, never in the project's records, and rebuilds the live app with them. `karigor status <id>` lists anything still missing.
+It hides what you type, stores values only where the app runs, never in the project's records, and rebuilds the live app with them. `nirmito status <id>` lists anything still missing.
 
 ## 5. Open and use it
 
 ```sh
-karigor serve <id> --port 3300
+nirmito serve <id> --port 3300
 ```
 
-Then open http://localhost:3300. Leave `serve` running: it keeps the app up and fixes problems on its own (step 8). It remembers the port the app went live on, so after the first time `karigor serve <id>` is enough.
+Then open http://localhost:3300. Leave `serve` running: it keeps the app up and fixes problems on its own (step 8). It remembers the port the app went live on, so after the first time `nirmito serve <id>` is enough.
 
-Your data stays on your computer, in `~/.karigor/projects/<id>/data/`, and survives every new release.
+Your data stays on your computer, in `~/.nirmito/projects/<id>/data/`, and survives every new release.
 
 **Signing in the first time.** On the chat page, the finished app's card has **Your way in**: give your email and name, press **Get my sign-in link**, and open the link to choose your password. From the command line, make yourself the first admin with:
 
 ```sh
-karigor admin-link <id> you@example.com "Your name"
+nirmito admin-link <id> you@example.com "Your name"
 ```
 
 Open the link it prints and choose your password. Then open **People** in the app to add the people who work with you, each with their role; the app gives you a one-time link to send each of them (by WhatsApp, SMS or email). Nobody needs an email service. Run `admin-link` again any time you need a new link for yourself.
@@ -133,54 +133,54 @@ Open the link it prints and choose your password. Then open **People** in the ap
 When you have tried stage 1, build the next stage on top of the live app:
 
 ```sh
-karigor grow <id>          # the next stage, then it stops so you can try it
-karigor grow <id> --all    # every remaining stage, one after another
+nirmito grow <id>          # the next stage, then it stops so you can try it
+nirmito grow <id> --all    # every remaining stage, one after another
 ```
 
-`karigor status <id>` lists the stages: built, being built, later. Each stage revises the design, plans its own pieces, builds and checks them, and releases a new version; your data stays. Feedback you sent since the last release is taken on by the stage too. In the chat UI the same thing is the **Build the next part** button. `serve` never starts a stage by itself: stages are your call.
+`nirmito status <id>` lists the stages: built, being built, later. Each stage revises the design, plans its own pieces, builds and checks them, and releases a new version; your data stays. Feedback you sent since the last release is taken on by the stage too. In the chat UI the same thing is the **Build the next part** button. `serve` never starts a stage by itself: stages are your call.
 
 ## 7. Change it
 
-**By pointing.** On the chat page, press **Change it by pointing** under your live app. Your app opens beside a list of changes. Click a part to pick it, then choose Move up, Move down or Remove, or type what should change. Drag a card, a row or a form field to a new place. Double-click words to change them. Drop a photo on a part to use it there. Nothing changes until you press **Send changes**. Then Karigor makes the changes with the same tests as any other change, but skips the longer reviews, so small edits are live in minutes. (The button shows for web apps made from the current template; older apps do not have the part that makes pointing possible.)
+**By pointing.** On the chat page, press **Change it by pointing** under your live app. Your app opens beside a list of changes. Click a part to pick it, then choose Move up, Move down or Remove, or type what should change. Drag a card, a row or a form field to a new place. Double-click words to change them. Drop a photo on a part to use it there. Nothing changes until you press **Send changes**. Then Nirmito makes the changes with the same tests as any other change, but skips the longer reviews, so small edits are live in minutes. (The button shows for web apps made from the current template; older apps do not have the part that makes pointing possible.)
 
-**By writing.** Tell Karigor in your own words, one thing per message:
+**By writing.** Tell Nirmito in your own words, one thing per message:
 
 ```sh
-karigor feedback <id> "On the sales list, tapping anywhere on a sale should open it, not just the time."
-karigor feedback <id> "Add a page that shows each month's total, with cash and bKash separately."
+nirmito feedback <id> "On the sales list, tapping anywhere on a sale should open it, not just the time."
+nirmito feedback <id> "Add a page that shows each month's total, with cash and bKash separately."
 ```
 
-If `serve` is running, a fix round starts within its check interval (10 minutes; change it with `--every`). Otherwise start one now with `karigor fix <id>`. A fix round builds the changes with the same checks as the first build and releases a new version; your data stays.
+If `serve` is running, a fix round starts within its check interval (10 minutes; change it with `--every`). Otherwise start one now with `nirmito fix <id>`. A fix round builds the changes with the same checks as the first build and releases a new version; your data stays.
 
-To change a decision Karigor made for you (they are listed in `karigor status` with ids like `a3`):
+To change a decision Nirmito made for you (they are listed in `nirmito status` with ids like `a3`):
 
 ```sh
-karigor correct <id> a3 "Prices should allow paisa, like 62.50."
+nirmito correct <id> a3 "Prices should allow paisa, like 62.50."
 ```
 
 Other tools:
 
-- `karigor dismiss <id> <workItemId> --reason "..."` closes a request or problem report you no longer want.
-- `karigor park <id> <itemId>` sets a piece of work aside; `karigor unpark` puts it back.
-- `karigor kit <id>` gives an app built on an older template the current look (a fix round then restyles its pages).
+- `nirmito dismiss <id> <workItemId> --reason "..."` closes a request or problem report you no longer want.
+- `nirmito park <id> <itemId>` sets a piece of work aside; `nirmito unpark` puts it back.
+- `nirmito kit <id>` gives an app built on an older template the current look (a fix round then restyles its pages).
 
-To remove a project you no longer want, open it on the chat page and press **Delete this project** at the bottom. It removes the app, its data and everything Karigor kept about it, and cannot be undone. An app put on Vercel stays online there; the page tells you its address so you can remove it from your Vercel account.
+To remove a project you no longer want, open it on the chat page and press **Delete this project** at the bottom. It removes the app, its data and everything Nirmito kept about it, and cannot be undone. An app put on Vercel stays online there; the page tells you its address so you can remove it from your Vercel account.
 
 ## 8. Keep it running
 
-`karigor serve <id> --port <n>` is the whole of operations on your computer. It runs the live app, watches its output and health, checks its libraries for security problems each day, and turns anything wrong into a fix round with a new release. It stops when you close it or restart the computer; run it again to continue.
+`nirmito serve <id> --port <n>` is the whole of operations on your computer. It runs the live app, watches its output and health, checks its libraries for security problems each day, and turns anything wrong into a fix round with a new release. It stops when you close it or restart the computer; run it again to continue.
 
 ## 9. Put it online
 
 For a public address, use Vercel's free tier. You need a free Vercel account and, so the data survives on the internet, a free [Turso](https://turso.tech) database:
 
 ```sh
-karigor new "..." --deploy vercel --run
-karigor setup <id>                             # it asks for the database address and token
-karigor watch <id> --every 15                  # checks the live site and fixes problems
+nirmito new "..." --deploy vercel --run
+nirmito setup <id>                             # it asks for the database address and token
+nirmito watch <id> --every 15                  # checks the live site and fixes problems
 ```
 
-Karigor uses the Vercel CLI's own login (`vercel login`), or a token in `VERCEL_TOKEN`.
+Nirmito uses the Vercel CLI's own login (`vercel login`), or a token in `VERCEL_TOKEN`.
 
 Other free hosts:
 
@@ -189,29 +189,29 @@ Other free hosts:
 
 A service (an API) goes on Vercel or this computer.
 
-`karigor watch` also reads a Vercel app's own logs since the last look: a request that failed or an error the app logged becomes a problem to fix, like downtime does.
+`nirmito watch` also reads a Vercel app's own logs since the last look: a request that failed or an error the app logged becomes a problem to fix, like downtime does.
 
 ### Phone apps
 
-Once a web app is online at its Vercel address, Karigor can make an **Android app** and an **iPhone app** for it: press **Make phone apps** on the chat page, or run `karigor phone-apps <id>`. Both open the live app with its own name, colours and icon, so every new release reaches the phones without a new build.
+Once a web app is online at its Vercel address, Nirmito can make an **Android app** and an **iPhone app** for it: press **Make phone apps** on the chat page, or run `nirmito phone-apps <id>`. Both open the live app with its own name, colours and icon, so every new release reaches the phones without a new build.
 
-They are built in the cloud on GitHub, because building phone apps needs tools most computers do not have. Sign the GitHub command line in once on the computer that runs Karigor (`gh auth login`). Karigor keeps the apps in a private repository of their own (the app's code stays with you), and a build takes about ten minutes. You then get:
+They are built in the cloud on GitHub, because building phone apps needs tools most computers do not have. Sign the GitHub command line in once on the computer that runs Nirmito (`gh auth login`). Nirmito keeps the apps in a private repository of their own (the app's code stays with you), and a build takes about ten minutes. You then get:
 
 - `app-release.apk`: install it on an Android phone directly, to try it or to share with your team.
 - `app-release.aab` and a 512-pixel icon: what the Play Store asks for. Publishing needs a Google Play developer account (a one-time fee).
 - `App-simulator.zip`: the iPhone app for Xcode's simulator. Putting it on real iPhones and in the App Store needs an Apple Developer account, and Apple expects more than a web page inside an app.
 
-Karigor makes the Android signing key once and keeps it in `phone-signing/` in the project. Keep a copy of that folder somewhere safe: the Play Store accepts updates only signed with the same key.
+Nirmito makes the Android signing key once and keeps it in `phone-signing/` in the project. Keep a copy of that folder somewhere safe: the Play Store accepts updates only signed with the same key.
 
 ## 10. What to expect
 
-Karigor builds web apps that work on phones and computers, from a single-person tool to a system with several roles: sign-in for many people with roles and permissions, invitations by link, an activity log, forms, searchable and sortable lists, records with money and stock, dashboards with charts, CSV export for spreadsheets, photos and documents up to 4 MB (videos and big files up to 200 MB once you set up a free Vercel Blob store), jobs that run on a schedule by themselves (a reminder every morning; when hosted for free, once a day, or every few minutes while `karigor watch --every` runs), and email and SMS. Each stage is at most 15 pieces of work, complete and tested end to end, including in a real browser for each kind of user.
+Nirmito builds web apps that work on phones and computers, from a single-person tool to a system with several roles: sign-in for many people with roles and permissions, invitations by link, an activity log, forms, searchable and sortable lists, records with money and stock, dashboards with charts, CSV export for spreadsheets, photos and documents up to 4 MB (videos and big files up to 200 MB once you set up a free Vercel Blob store), jobs that run on a schedule by themselves (a reminder every morning; when hosted for free, once a day, or every few minutes while `nirmito watch --every` runs), and email and SMS. Each stage is at most 15 pieces of work, complete and tested end to end, including in a real browser for each kind of user.
 
-Email and SMS go out once you have an account with an email service (Resend) or an SMS service (Twilio, or any SMS gateway with a web address, such as a local provider); until then the app keeps each message and shows it as not sent. Hosted on Vercel's free plan, scheduled jobs run once a day; under `karigor serve` on your computer they run every few minutes.
+Email and SMS go out once you have an account with an email service (Resend) or an SMS service (Twilio, or any SMS gateway with a web address, such as a local provider); until then the app keeps each message and shows it as not sent. Hosted on Vercel's free plan, scheduled jobs run once a day; under `nirmito serve` on your computer they run every few minutes.
 
 A large file kept in a Vercel Blob store has a long, random web address. The app sends only signed-in people to it, but anyone who is handed that exact address can open the file, so keep anything very private under 4 MB, where it stays in the app's own database. Each person can add up to 1 GB of large files a day, and removing a file in the app removes it from the store too.
 
-Not yet supported: files over 4 MB without a file-storage account (or over 200 MB at all), WhatsApp, anything that updates on screen without reloading, taking card or mobile-money payments inside the app (it records payments made elsewhere), and one installation serving several separate organisations. Karigor will work around them or leave them out and say so. Tips:
+Not yet supported: files over 4 MB without a file-storage account (or over 200 MB at all), WhatsApp, anything that updates on screen without reloading, taking card or mobile-money payments inside the app (it records payments made elsewhere), and one installation serving several separate organisations. Nirmito will work around them or leave them out and say so. Tips:
 
 - Name each kind of person and what they may and may not see; the design plans for them from the start.
 - Try each stage before building the next; your feedback goes into the next stage.
@@ -221,22 +221,22 @@ Not yet supported: files over 4 MB without a file-storage account (or over 200 M
 
 | Command | What it does |
 |---|---|
-| `karigor new "<idea>" --run` | Start a new app and build it |
-| `karigor starters [id]` | List ready-made ideas, or read one in full |
-| `karigor new --starter <id> "<changes>" --run` | Start from a ready-made idea, with your changes |
-| `karigor --lang bn <command>` | Talk to you in Bangla, including `--help` and the progress while it builds (`KARIGOR_LANG=bn` does the same). A project whose idea is in Bangla gets Bangla on its own, in `status`, `explain`, `setup` and from every agent |
-| `karigor status <id>` | Where it stands |
-| `karigor resume <id> [--wait]` | Continue after a pause, limit or crash; `--wait` keeps retrying through usage limits |
-| `karigor setup <id>` | Give settings only you can provide |
-| `karigor serve <id> --port <n>` | Run it on this computer and keep it healthy |
-| `karigor feedback <id> "<text>"` | Ask for a change or report a problem |
-| `karigor fix <id>` | Start a fix round now |
-| `karigor grow <id> [--all]` | Build the next stage (or every remaining one) |
-| `karigor admin-link <id> <email> ["name"]` | A one-time link to set your admin password |
-| `karigor access-key <id> ["name"]` | For a service: an access key, shown once |
-| `karigor phone-apps <id>` | Make the Android and iPhone apps for a web app that is online |
-| `karigor correct <id> <decisionId> "<text>"` | Change a decision made for you |
-| `karigor reopen <id>` | Bring parked work back after a stop |
-| `karigor dismiss <id> <workItemId>` | Close a request you no longer want |
-| `karigor explain <id>` | The story of what happened |
-| `karigor cost <id>` | What it has used |
+| `nirmito new "<idea>" --run` | Start a new app and build it |
+| `nirmito starters [id]` | List ready-made ideas, or read one in full |
+| `nirmito new --starter <id> "<changes>" --run` | Start from a ready-made idea, with your changes |
+| `nirmito --lang bn <command>` | Talk to you in Bangla, including `--help` and the progress while it builds (`NIRMITO_LANG=bn` does the same). A project whose idea is in Bangla gets Bangla on its own, in `status`, `explain`, `setup` and from every agent |
+| `nirmito status <id>` | Where it stands |
+| `nirmito resume <id> [--wait]` | Continue after a pause, limit or crash; `--wait` keeps retrying through usage limits |
+| `nirmito setup <id>` | Give settings only you can provide |
+| `nirmito serve <id> --port <n>` | Run it on this computer and keep it healthy |
+| `nirmito feedback <id> "<text>"` | Ask for a change or report a problem |
+| `nirmito fix <id>` | Start a fix round now |
+| `nirmito grow <id> [--all]` | Build the next stage (or every remaining one) |
+| `nirmito admin-link <id> <email> ["name"]` | A one-time link to set your admin password |
+| `nirmito access-key <id> ["name"]` | For a service: an access key, shown once |
+| `nirmito phone-apps <id>` | Make the Android and iPhone apps for a web app that is online |
+| `nirmito correct <id> <decisionId> "<text>"` | Change a decision made for you |
+| `nirmito reopen <id>` | Bring parked work back after a stop |
+| `nirmito dismiss <id> <workItemId>` | Close a request you no longer want |
+| `nirmito explain <id>` | The story of what happened |
+| `nirmito cost <id>` | What it has used |

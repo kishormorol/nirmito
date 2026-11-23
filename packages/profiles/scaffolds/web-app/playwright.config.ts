@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Browser journeys: each kind of user's main jobs, done the way a person does them.
- * `pnpm build` first (it migrates the database), then `pnpm e2e`. Karigor's journeys check runs both
+ * `pnpm build` first (it migrates the database), then `pnpm e2e`. Nirmito's journeys check runs both
  * on a brand-new database before every release.
  */
 process.env.DATABASE_URL ??= "file:./data/e2e.db";

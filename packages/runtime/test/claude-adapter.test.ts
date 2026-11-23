@@ -18,8 +18,8 @@ describe("ClaudeAdapter (offline)", () => {
   });
 });
 
-/** Costs real money. Run with KARIGOR_REAL_MODEL=1 and a configured Anthropic credential. */
-describe.runIf(process.env["KARIGOR_REAL_MODEL"] === "1")("ClaudeAdapter (live contract)", () => {
+/** Costs real money. Run with NIRMITO_REAL_MODEL=1 and a configured Anthropic credential. */
+describe.runIf(process.env["NIRMITO_REAL_MODEL"] === "1")("ClaudeAdapter (live contract)", () => {
   it("returns schema-valid structured output with usage", async () => {
     const a = new ClaudeAdapter();
     const r = await a.complete({

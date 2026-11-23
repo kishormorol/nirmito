@@ -80,8 +80,8 @@ describe("ModelAgent", () => {
   });
 });
 
-/** Needs a running Ollama with the model pulled. Run with KARIGOR_REAL_MODEL=1 (and KARIGOR_OLLAMA_MODEL to pick one). */
-describe.runIf(process.env["KARIGOR_REAL_MODEL"] === "1" && process.env["KARIGOR_SKIP_OLLAMA"] !== "1")("OllamaAdapter (live)", () => {
+/** Needs a running Ollama with the model pulled. Run with NIRMITO_REAL_MODEL=1 (and NIRMITO_OLLAMA_MODEL to pick one). */
+describe.runIf(process.env["NIRMITO_REAL_MODEL"] === "1" && process.env["NIRMITO_SKIP_OLLAMA"] !== "1")("OllamaAdapter (live)", () => {
   it("returns schema-valid structured output from a local model", async () => {
     const a = new OllamaAdapter();
     const r = await a.complete({

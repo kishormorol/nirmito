@@ -34,7 +34,7 @@ const MAX_SESSIONS = 10;
 
 const hash = (token: string) => createHash("sha256").update(token).digest("hex");
 
-/** The people who may use this Karigor, kept in `people.json` beside the projects. */
+/** The people who may use this Nirmito, kept in `people.json` beside the projects. */
 export class People {
   private readonly file: string;
   /** Writes happen one after another, so two sign-ups never overwrite each other. */

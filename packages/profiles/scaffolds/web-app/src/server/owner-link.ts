@@ -3,7 +3,7 @@ import { db as defaultDb } from "@/db";
 import { ensureAdmin, type Db } from "@/server/people";
 
 /**
- * Karigor's way to give the app's owner their first sign-in when it cannot reach the database itself
+ * Nirmito's way to give the app's owner their first sign-in when it cannot reach the database itself
  * (a hosted app): it holds OWNER_LINK_SECRET and asks here. Without the secret set, this is switched off.
  */
 export function ownerLinkAuthorized(authorization: string | null, secret: string | undefined = process.env.OWNER_LINK_SECRET): boolean {

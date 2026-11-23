@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { PUBLIC_PATHS, SESSION_COOKIE, sessionCookieOptions } from "@/lib/session-cookie";
 
-/** Only the app itself, and Karigor's preview when it is set, may show the app inside a frame. */
+/** Only the app itself, and Nirmito's preview when it is set, may show the app inside a frame. */
 function framedBy(res: NextResponse): NextResponse {
   const editor = process.env.KARIGOR_EDITOR_ORIGIN;
   res.headers.set("content-security-policy", `frame-ancestors 'self'${editor && /^https?:\/\/[^\s;]+$/.test(editor) ? ` ${editor}` : ""}`);

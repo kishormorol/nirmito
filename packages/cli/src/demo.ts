@@ -1,6 +1,6 @@
 /**
  * The demo adapter: a mock that plays every role plausibly, offline and at zero cost.
- * `karigor new "..." --adapter demo --run` exercises the whole kernel without a model.
+ * `nirmito new "..." --adapter demo --run` exercises the whole kernel without a model.
  * Tests reuse it with `override` hooks to script failures.
  */
 import type { ModelRequest } from "@karigor/runtime";

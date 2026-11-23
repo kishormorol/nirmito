@@ -60,7 +60,7 @@ export async function deployFor(target: string | undefined, store: FsStore, prof
     case "vercel": {
       const state = await store.replay();
       const idea = state.ideaId ? (await store.readArtifact("idea", state.ideaId)).meta.text : store.projectId;
-      return new VercelDeploy({ project: projectSlug(idea, store.projectId), ...(profile.healthPath ? { healthPath: profile.healthPath } : {}), ...(process.env["KARIGOR_DEPLOY_ENV"] ? { envNames: process.env["KARIGOR_DEPLOY_ENV"].split(",").map((x) => x.trim()).filter(Boolean) } : {}) });
+      return new VercelDeploy({ project: projectSlug(idea, store.projectId), ...(profile.healthPath ? { healthPath: profile.healthPath } : {}), ...(process.env["NIRMITO_DEPLOY_ENV"] ? { envNames: process.env["NIRMITO_DEPLOY_ENV"].split(",").map((x) => x.trim()).filter(Boolean) } : {}) });
     }
     case "netlify": {
       if (profile.name !== "web-app" && profile.name !== "static-site") throw new Error(`Netlify hosts web apps and simple websites; this is a ${profile.name}, so use vercel or local`);

@@ -322,12 +322,12 @@ async function runProjectLocked(opts: RunOptions): Promise<ProjectState> {
         const firstRelease = (await productionCount()) === 0;
         const pkg = JSON.parse(await readFile(join(ws.dir, "package.json"), "utf8").catch(() => "{}")) as { scripts?: Record<string, string> };
         if (firstRelease && pkg.scripts?.["admin:link"]) {
-          fresh.body += `\n## Signing in the first time\n\nRun \`karigor admin-link ${state.projectId} you@example.com "Your name"\` and open the link it prints to choose your password. Then add the people who work with you from People; each gets their own link.\n`;
-          log(`  to sign in the first time: karigor admin-link ${state.projectId} <your email> "<your name>"`);
+          fresh.body += `\n## Signing in the first time\n\nRun \`nirmito admin-link ${state.projectId} you@example.com "Your name"\` and open the link it prints to choose your password. Then add the people who work with you from People; each gets their own link.\n`;
+          log(`  to sign in the first time: nirmito admin-link ${state.projectId} <your email> "<your name>"`);
         }
         if (firstRelease && pkg.scripts?.["key:new"]) {
-          fresh.body += `\n## Your first access key\n\nRun \`karigor access-key ${state.projectId} "Your name"\` to get the key programs use to call it (it is shown once). The docs page at ${res.url.replace(/\/$/, "")}/docs shows every call with an example.\n`;
-          log(`  to get the first access key: karigor access-key ${state.projectId} "<your name>"`);
+          fresh.body += `\n## Your first access key\n\nRun \`nirmito access-key ${state.projectId} "Your name"\` to get the key programs use to call it (it is shown once). The docs page at ${res.url.replace(/\/$/, "")}/docs shows every call with an example.\n`;
+          log(`  to get the first access key: nirmito access-key ${state.projectId} "<your name>"`);
         }
         if (missing.length) fresh.body += `\n## Before it can be used\n\nIt is online, but it needs these settings on ${opts.deploy!.describe()} before it can do its job:\n\n${missing.map((m) => `- \`${m.name}\`${m.note ? `: ${m.note}` : ""}`).join("\n")}\n`;
         await store.writeArtifact(fresh);
@@ -504,7 +504,7 @@ async function runProjectLocked(opts: RunOptions): Promise<ProjectState> {
             // A preview without the person's own settings cannot work; wait for them instead of failing checks.
             const needs = ((await opts.deploy.missingSettings?.((await getWorkspace()).dir).catch(() => [])) ?? []).filter((m) => m.kind !== "generate");
             if (needs.length) {
-              log(`  waiting for you: ${needs.map((m) => m.name).join(", ")} (karigor setup ${state.projectId})`);
+              log(`  waiting for you: ${needs.map((m) => m.name).join(", ")} (nirmito setup ${state.projectId})`);
               await append({ type: "project-waiting", by: "system", needs: needs.map((m) => m.name) });
               await store.commit("karigor: waiting for the person's settings");
               break;
@@ -639,13 +639,13 @@ async function runProjectLocked(opts: RunOptions): Promise<ProjectState> {
   } catch (e) {
     // The provider's allowance ran out mid-step: nothing failed, so nothing is counted against the work.
     if (!(e instanceof QuotaError)) throw e;
-    const reason = `the model's usage allowance is used up${e.resets ? ` (it resets ${e.resets})` : ""}; nothing failed, and the work carries on with karigor resume after that`;
+    const reason = `the model's usage allowance is used up${e.resets ? ` (it resets ${e.resets})` : ""}; nothing failed, and the work carries on with nirmito resume after that`;
     log(`  paused: ${reason}`);
     await saveLedger();
     await append({ type: "project-paused", by: "system", reason });
     await store.commit("karigor: paused (usage allowance used up)");
   } finally {
-    // Previews do not outlive the run; production is served by `karigor serve` or the hosting target.
+    // Previews do not outlive the run; production is served by `nirmito serve` or the hosting target.
     await opts.deploy?.stop();
   }
   if (state.status !== "finished" && state.status !== "stopped" && state.status !== "waiting") throw new RunError(`run did not settle within ${maxSteps} steps`);

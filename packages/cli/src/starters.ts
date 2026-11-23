@@ -314,11 +314,11 @@ export function starterIdea(starter: Starter, changes?: string, lang: Lang = "en
 /** The idea a new project starts from: the person's own words, or a starter with their changes. */
 export function ideaFor(idea: string | undefined, starterId: string | undefined, lang: Lang = "en"): string {
   if (starterId === undefined) {
-    if (!idea?.trim()) throw new Error("describe your idea in your own words, or start from a ready-made one with --starter <id> (see karigor starters)");
+    if (!idea?.trim()) throw new Error("describe your idea in your own words, or start from a ready-made one with --starter <id> (see nirmito starters)");
     return idea;
   }
   const starter = findStarter(starterId);
-  if (!starter) throw new Error(`there is no ready-made idea called "${starterId}"; karigor starters lists them`);
+  if (!starter) throw new Error(`there is no ready-made idea called "${starterId}"; nirmito starters lists them`);
   return starterIdea(starter, idea, lang);
 }
 
@@ -326,15 +326,15 @@ export function renderStarters(lang: Lang = "en"): string {
   const width = Math.max(...STARTERS.map((s) => s.id.length));
   if (lang === "bn") {
     return [
-      "তৈরি করা আইডিয়া। একটি থেকে শুরু করুন: karigor new --starter <id> \"আপনার পরিবর্তন, নিজের ভাষায়\"",
-      "একটি পুরোটা পড়ুন: karigor starters <id>",
+      "তৈরি করা আইডিয়া। একটি থেকে শুরু করুন: nirmito new --starter <id> \"আপনার পরিবর্তন, নিজের ভাষায়\"",
+      "একটি পুরোটা পড়ুন: nirmito starters <id>",
       "",
       ...STARTERS.map((s) => `  ${s.id.padEnd(width)}  ${STARTERS_BN[s.id]?.title ?? s.title}, ${STARTERS_BN[s.id]?.for ?? s.for}`),
     ].join("\n");
   }
   return [
-    "Ready-made ideas. Start one with: karigor new --starter <id> \"your changes, in your own words\"",
-    "Read one in full with: karigor starters <id>",
+    "Ready-made ideas. Start one with: nirmito new --starter <id> \"your changes, in your own words\"",
+    "Read one in full with: nirmito starters <id>",
     "",
     ...STARTERS.map((s) => `  ${s.id.padEnd(width)}  ${s.title}, for ${s.for}`),
   ].join("\n");
@@ -350,8 +350,8 @@ export function renderStarter(starter: Starter, lang: Lang = "en"): string {
       "",
       `যার আদলে: ${starter.basedOn.map((b) => `${b.name} (github.com/${b.repo})`).join(", ")}`,
       "",
-      `যেমন আছে তেমন শুরু করুন:   karigor new --starter ${starter.id} --lang bn --run`,
-      `অথবা পরিবর্তনসহ:          karigor new --starter ${starter.id} "আপনার ক্ষেত্রে কী আলাদা, নিজের ভাষায়" --run`,
+      `যেমন আছে তেমন শুরু করুন:   nirmito new --starter ${starter.id} --lang bn --run`,
+      `অথবা পরিবর্তনসহ:          nirmito new --starter ${starter.id} "আপনার ক্ষেত্রে কী আলাদা, নিজের ভাষায়" --run`,
     ].join("\n");
   }
   return [
@@ -361,7 +361,7 @@ export function renderStarter(starter: Starter, lang: Lang = "en"): string {
     "",
     `Modelled on: ${starter.basedOn.map((b) => `${b.name} (github.com/${b.repo})`).join(", ")}`,
     "",
-    `Start it as is:      karigor new --starter ${starter.id} --run`,
-    `Or with changes:     karigor new --starter ${starter.id} "What is different for you, in your own words" --run`,
+    `Start it as is:      nirmito new --starter ${starter.id} --run`,
+    `Or with changes:     nirmito new --starter ${starter.id} "What is different for you, in your own words" --run`,
   ].join("\n");
 }

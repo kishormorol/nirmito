@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
-import { AppPorts, createKarigorServer, LiveApps, type KarigorServer } from "../src/index.js";
+import { AppPorts, createNirmitoServer, LiveApps, type NirmitoServer } from "../src/index.js";
 
 const SERVE = `import { createServer } from "node:http";
 createServer((req, res) => res.end(req.url === "/health" ? "ok" : JSON.stringify({ release: process.env.RELEASE_NAME, site: process.env.SITE_URL }))).listen(Number(process.env.PORT), "127.0.0.1");
@@ -50,7 +50,7 @@ describe("hosted apps", { timeout: 60_000 }, () => {
 
   it("shows hosted apps at their public address and vouches only for those addresses", async () => {
     const root = await mkdtemp(join(tmpdir(), "karigor-apps-"));
-    const k: KarigorServer = createKarigorServer({ root, adapter: "demo", profile: "fixture", apps: { url: "https://a{port}.example.com" } });
+    const k: NirmitoServer = createNirmitoServer({ root, adapter: "demo", profile: "fixture", apps: { url: "https://a{port}.example.com" } });
     stops.push(async () => {
       await k.idle();
       await new Promise((r) => k.server.close(r));

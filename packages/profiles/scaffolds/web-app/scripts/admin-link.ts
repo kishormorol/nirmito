@@ -2,7 +2,7 @@
  * Makes the first admin (or gives an existing person admin rights) and prints a one-time link to set
  * a password. Run on the computer that can reach the app's database:
  *   pnpm admin:link owner@example.com "Owner's name"
- * Karigor runs it for the person with: karigor admin-link <project> <email> [name]
+ * Nirmito runs it for the person with: nirmito admin-link <project> <email> [name]
  */
 import { ensureAdmin } from "../src/server/people";
 

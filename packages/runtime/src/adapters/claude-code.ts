@@ -49,7 +49,7 @@ export interface ClaudeCodeAdapterOptions {
 
 /**
  * Full model ids, never the aliases ("opus", "sonnet"): a person's Claude Code settings can point
- * an alias at another model, and Karigor's cost and quality must not change with that.
+ * an alias at another model, and Nirmito's cost and quality must not change with that.
  */
 export const CLAUDE_CODE_DEFAULTS = {
   judgmentModel: "claude-opus-5-5",
@@ -63,7 +63,7 @@ export const CLAUDE_CODE_DEFAULTS = {
 } as const;
 
 /**
- * Karigor's calls carry only Karigor's own prompt: none of the person's connectors (their tool
+ * Nirmito's calls carry only Nirmito's own prompt: none of the person's connectors (their tool
  * lists add thousands of tokens to every call, and a build has no business reading someone's
  * drive) and none of their skills or commands.
  */

@@ -3,9 +3,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
-import { balanceOf, createKarigorServer, People, type KarigorServer, type Mailer } from "../src/index.js";
+import { balanceOf, createNirmitoServer, People, type NirmitoServer, type Mailer } from "../src/index.js";
 
-const open: KarigorServer[] = [];
+const open: NirmitoServer[] = [];
 afterEach(async () => {
   for (const k of open.splice(0)) {
     await k.idle();
@@ -17,7 +17,7 @@ async function start(o: { signup?: boolean; metered?: boolean; welcome?: number;
   const root = await mkdtemp(join(tmpdir(), "karigor-accounts-"));
   const sent: { to: string; link: string }[] = [];
   const mailer: Mailer = async (to, link) => (sent.push({ to, link }), { ok: true, output: "sent" });
-  const k = createKarigorServer({
+  const k = createNirmitoServer({
     root,
     adapter: o.adapter ?? "demo",
     token: "admin-token",
@@ -101,7 +101,7 @@ describe("credit", { timeout: 120_000 }, () => {
     const own = await call("/api/projects", { method: "POST", cookie, body: JSON.stringify({ idea: "A tool library", apiKey: "sk-ant-test-not-real" }) });
     expect(own.status).toBe(201);
     await k.idle();
-    // after buying credit it starts on this Karigor's key
+    // after buying credit it starts on this Nirmito's key
     const people = new People(root);
     const p = (await people.all()).find((x) => x.email === "sam@example.com")!;
     expect(await people.addCredit(p.id, 5, "pay_1")).toBe(true);

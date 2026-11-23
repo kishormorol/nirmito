@@ -3,7 +3,7 @@ import { ownerLink, ownerLinkAuthorized } from "@/server/owner-link";
 import { peekLink } from "@/server/people";
 import { testDb } from "./db";
 
-describe("the owner's first link, asked for by Karigor", () => {
+describe("the owner's first link, asked for by Nirmito", () => {
   it("is switched off without the secret, and needs exactly the secret", () => {
     expect(ownerLinkAuthorized("Bearer x", undefined)).toBe(false);
     expect(ownerLinkAuthorized(null, "s3cret")).toBe(false);

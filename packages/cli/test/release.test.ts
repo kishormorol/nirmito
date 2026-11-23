@@ -66,7 +66,7 @@ describe("release: deploy, verify, promote", { timeout: 120_000 }, () => {
     const store = await FsStore.open(root, projectId, { committer: noopCommitter });
     const summary = await store.readArtifact("summary", state.artifacts.summary!.at(-1)!);
     expect(summary.meta.url).toBe("http://localhost:3000");
-    expect(summary.body).toMatch(/karigor serve/);
+    expect(summary.body).toMatch(/nirmito serve/);
     const ws = await Workspace.open(join(root, projectId, "workspace"));
     const tags = await run("git", ["tag"], { cwd: ws.dir });
     expect(tags.stdout).toMatch(new RegExp(`karigor-release-${prod!.version}`));
@@ -89,7 +89,7 @@ describe("release: deploy, verify, promote", { timeout: 120_000 }, () => {
     expect(state.artifacts["deploy-record"]).toBeUndefined();
     const { provideSettings, renderStatus, renderExplain } = await import("../src/index.js");
     const store = await FsStore.open(root, projectId, { committer: noopCommitter });
-    expect(await renderStatus(store, state)).toMatch(/waiting for you[\s\S]*FAMILY_PASSCODE[\s\S]*karigor setup/);
+    expect(await renderStatus(store, state)).toMatch(/waiting for you[\s\S]*FAMILY_PASSCODE[\s\S]*nirmito setup/);
     await expect(provideSettings({ store, deploy, values: { NOT_A_SETTING: "x" } })).rejects.toThrow(/no setting called NOT_A_SETTING/);
     const r = await provideSettings({ store, deploy, values: { FAMILY_PASSCODE: "plum-tree-42" } });
     expect(r).toMatchObject({ stored: ["FAMILY_PASSCODE"], stillMissing: [], resumed: true });

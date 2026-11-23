@@ -1,19 +1,19 @@
-# Karigor as a public platform on one server: people sign up in the browser, build by chatting,
+# Nirmito as a public platform on one server: people sign up in the browser, build by chatting,
 # and use their apps at their own addresses. Started by setup.sh, which writes .env beside this file.
 services:
   karigor:
     build: ..
-    # Every setting in .env (sign-in by email, credit, payments, the model key: see `karigor-server --help`).
+    # Every setting in .env (sign-in by email, credit, payments, the model key: see `nirmito-server --help`).
     env_file: .env
     environment:
-      KARIGOR_TOKEN: ${KARIGOR_TOKEN:?run setup.sh, which makes it}
-      KARIGOR_URL: https://${KARIGOR_DOMAIN}
-      KARIGOR_APPS_URL: https://a{port}.${KARIGOR_APPS_DOMAIN}
-      KARIGOR_SIGNUP: ${KARIGOR_SIGNUP:-open}
-      KARIGOR_ADAPTER: ${KARIGOR_ADAPTER:-ollama}
-      KARIGOR_OLLAMA_MODEL: ${KARIGOR_OLLAMA_MODEL:-qwen2.5:7b}
-      KARIGOR_TRUST_PROXY: "1"   # only Caddy, below, can reach it
-      KARIGOR_DEPLOY: local
+      NIRMITO_TOKEN: ${NIRMITO_TOKEN:-${KARIGOR_TOKEN:?run setup.sh, which makes it}}
+      NIRMITO_URL: https://${NIRMITO_DOMAIN:-${KARIGOR_DOMAIN:-}}
+      NIRMITO_APPS_URL: https://a{port}.${NIRMITO_APPS_DOMAIN:-${KARIGOR_APPS_DOMAIN:-}}
+      NIRMITO_SIGNUP: ${NIRMITO_SIGNUP:-${KARIGOR_SIGNUP:-open}}
+      NIRMITO_ADAPTER: ${NIRMITO_ADAPTER:-${KARIGOR_ADAPTER:-ollama}}
+      NIRMITO_OLLAMA_MODEL: ${NIRMITO_OLLAMA_MODEL:-${KARIGOR_OLLAMA_MODEL:-qwen2.5:7b}}
+      NIRMITO_TRUST_PROXY: "1"   # only Caddy, below, can reach it
+      NIRMITO_DEPLOY: local
     volumes:
       - karigor-data:/data
     depends_on:
@@ -30,7 +30,7 @@ services:
       - "80:80"
       - "443:443"
     environment:
-      KARIGOR_DOMAIN: ${KARIGOR_DOMAIN}
+      NIRMITO_DOMAIN: ${NIRMITO_DOMAIN:-${KARIGOR_DOMAIN:-}}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

@@ -4,9 +4,9 @@ import { join } from "node:path";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
 import { FsStore } from "@karigor/store";
-import { createKarigorServer, type KarigorServer } from "../src/index.js";
+import { createNirmitoServer, type NirmitoServer } from "../src/index.js";
 
-const open: KarigorServer[] = [];
+const open: NirmitoServer[] = [];
 afterEach(async () => {
   for (const k of open.splice(0)) {
     await k.idle();
@@ -15,8 +15,8 @@ afterEach(async () => {
 });
 
 async function start(o: { token?: string; adapter?: string; signup?: boolean } = {}) {
-  const root = await mkdtemp(join(tmpdir(), "karigor-server-"));
-  const k = createKarigorServer({ root, adapter: o.adapter ?? "demo", ...(o.token ? { token: o.token } : {}), ...(o.signup ? { signup: true } : {}) });
+  const root = await mkdtemp(join(tmpdir(), "nirmito-server-"));
+  const k = createNirmitoServer({ root, adapter: o.adapter ?? "demo", ...(o.token ? { token: o.token } : {}), ...(o.signup ? { signup: true } : {}) });
   open.push(k);
   await new Promise<void>((r) => k.server.listen(0, "127.0.0.1", r));
   const base = `http://127.0.0.1:${(k.server.address() as AddressInfo).port}`;
@@ -34,7 +34,7 @@ describe("server", { timeout: 180_000 }, () => {
     expect(res.status).toBe(200);
     expect(res.headers.get("content-security-policy")).toMatch(/frame-ancestors 'none'/);
     const html = await res.text();
-    expect(html).toMatch(/<title>Karigor<\/title>/);
+    expect(html).toMatch(/<title>Nirmito<\/title>/);
     expect(html).toMatch(/Tell me your idea/);
   });
 
@@ -144,7 +144,7 @@ describe("server", { timeout: 180_000 }, () => {
     const { k, call, root } = await start();
     const id = (await call("/api/projects", { method: "POST", body: JSON.stringify({ idea: "Tool lending" }) })).json["projectId"] as string;
     await k.idle();
-    // A CLI resume or karigor serve holds the project: its pid is in run.lock and it is alive.
+    // A CLI resume or nirmito serve holds the project: its pid is in run.lock and it is alive.
     await writeFile(join(root, id, "run.lock"), String(process.ppid));
     expect((await call(`/api/projects/${id}`)).json).toMatchObject({ running: true });
     expect((await call("/api/projects")).json["projects"]).toEqual([expect.objectContaining({ id, running: true })]);
@@ -163,7 +163,7 @@ describe("server", { timeout: 180_000 }, () => {
     const store = await FsStore.open(first.root, id);
     await store.appendEvent({ type: "project-reopened", by: "user", itemIds: [] });
     await store.appendEvent({ type: "project-paused", by: "system", reason: "the model's usage allowance is used up" });
-    const k = createKarigorServer({ root: first.root, adapter: "demo", resumeEveryMs: 50 });
+    const k = createNirmitoServer({ root: first.root, adapter: "demo", resumeEveryMs: 50 });
     open.push(k);
     const deadline = Date.now() + 60_000;
     // The outcome, not the run itself: on a fast computer it is over between two looks.

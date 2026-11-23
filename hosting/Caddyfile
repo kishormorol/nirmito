@@ -1,12 +1,12 @@
-# The chat page at KARIGOR_DOMAIN; each app at a<port>.<apps domain>, where Karigor keeps it running.
+# The chat page at NIRMITO_DOMAIN; each app at a<port>.<apps domain>, where Nirmito keeps it running.
 {
 	on_demand_tls {
-		# Certificates only for addresses of apps Karigor actually hosts.
+		# Certificates only for addresses of apps Nirmito actually hosts.
 		ask http://karigor:4321/tls-ok
 	}
 }
 
-{$KARIGOR_DOMAIN} {
+{$NIRMITO_DOMAIN} {
 	reverse_proxy karigor:4321
 }
 

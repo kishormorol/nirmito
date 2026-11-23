@@ -87,7 +87,7 @@ export class RunningServer {
 }
 
 const wrongPort = (other: number, given: number) =>
-  `the app started on port ${other}, not on the port it was given (PORT=${given}): its start command or its code fixes the port. Karigor chooses the port for every preview and release, so the app must listen on the PORT setting (for example a plain \`next start\`, with no -p).`;
+  `the app started on port ${other}, not on the port it was given (PORT=${given}): its start command or its code fixes the port. Nirmito chooses the port for every preview and release, so the app must listen on the PORT setting (for example a plain \`next start\`, with no -p).`;
 
 /** Start `argv` in `cwd` with `PORT` set, in its own process group so it can be stopped as a whole. */
 export function startServer(argv: string[], cwd: string, port: number, env: NodeJS.ProcessEnv = {}): RunningServer {

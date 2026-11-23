@@ -36,7 +36,7 @@ describe("the phone apps' files", () => {
     expect(f["android/app/build.gradle"]).toMatch(/applicationId "app\.karigor\.rinas_shop_a1b2c3"[\s\S]*versionCode 3[\s\S]*versionName "1\.3"/);
     expect(f["android/app/src/main/res/values/strings.xml"]).toContain(`<string name="app_name">Rina\\'s Shop</string>`);
     expect(f["android/app/src/main/res/values/colors.xml"]).toContain("#ffffff");
-    expect(f["ios/App/Info.plist"]).toContain("<key>KarigorAppURL</key><string>https://rinas-shop-a1b2c3.vercel.app/</string>");
+    expect(f["ios/App/Info.plist"]).toContain("<key>NirmitoAppURL</key><string>https://rinas-shop-a1b2c3.vercel.app/</string>");
     expect(f["ios/project.yml"]).toContain('PRODUCT_BUNDLE_IDENTIFIER: "app.karigor.rinas_shop_a1b2c3"');
     expect(JSON.parse(f["phone.json"]!)).toMatchObject({ versionCode: 3, icon: INFO.icon });
     expect(androidString('@a "b" \\ <c>')).toBe('\\@a \\"b\\" \\\\ &lt;c&gt;');
@@ -55,7 +55,7 @@ describe("the phone apps' files", () => {
     expect(() => phoneFiles({ ...INFO, packageId: "App.Bad-Id" })).toThrow(/not a valid package id/);
   });
 
-  it.runIf(process.env["KARIGOR_PHONE_LINT"] === "1")("are valid XML and plist", async () => {
+  it.runIf(process.env["NIRMITO_PHONE_LINT"] === "1")("are valid XML and plist", async () => {
     const dir = await mkdtemp(join(tmpdir(), "karigor-phone-files-"));
     for (const [p, c] of Object.entries(phoneFiles(INFO))) {
       await mkdir(join(dir, p, ".."), { recursive: true });
@@ -139,7 +139,7 @@ describe("making the phone apps", () => {
     const s = await makePhoneApps({ projectDir: dir, slug: "rinas-shop-a1b2c3", url: "https://rinas-shop-a1b2c3.vercel.app/", exec, fetcher: noManifest, pollMs: 1, setAppLinks: async (v) => (links.push(v), { ok: true, output: "" }) });
     expect(s).toMatchObject({ status: "ready", repo: "rina/rinas-shop-a1b2c3-phone", packageId: "app.karigor.rinas_shop_a1b2c3", versionCode: 1 });
     expect(s.files?.map((f) => f.path).sort()).toEqual(["v1/android/app-release.aab", "v1/android/app-release.apk", "v1/ios/App-simulator.zip"]);
-    expect(calls.some((c) => c.cmd === "gh" && c.args.join(" ") === "repo create rina/rinas-shop-a1b2c3-phone --private --description Phone apps for rinas-shop-a1b2c3.vercel.app, made by Karigor")).toBe(true);
+    expect(calls.some((c) => c.cmd === "gh" && c.args.join(" ") === "repo create rina/rinas-shop-a1b2c3-phone --private --description Phone apps for rinas-shop-a1b2c3.vercel.app, made by Nirmito")).toBe(true);
     const secrets = calls.filter((c) => c.cmd === "gh" && c.args[0] === "secret");
     expect(secrets.map((c) => c.args[2])).toEqual(["ANDROID_KEYSTORE_B64", "ANDROID_KEYSTORE_PASSWORD"]);
     expect(secrets[0]!.input).toBe(Buffer.from("p12-bytes").toString("base64"));
@@ -172,11 +172,11 @@ describe("making the phone apps", () => {
   });
 });
 
-/** The real thing: a private repository on the signed-in GitHub account and a cloud build. KARIGOR_REAL_PHONE=<https app address>. */
-describe.runIf(!!process.env["KARIGOR_REAL_PHONE"])("making the phone apps (live, GitHub)", () => {
+/** The real thing: a private repository on the signed-in GitHub account and a cloud build. NIRMITO_REAL_PHONE=<https app address>. */
+describe.runIf(!!process.env["NIRMITO_REAL_PHONE"])("making the phone apps (live, GitHub)", () => {
   it("builds the Android app and the iPhone simulator app in the cloud and downloads them", async () => {
-    const dir = process.env["KARIGOR_REAL_PHONE_DIR"] || (await mkdtemp(join(tmpdir(), "karigor-real-phone-")));
-    const s = await makePhoneApps({ projectDir: dir, slug: process.env["KARIGOR_REAL_PHONE_SLUG"] || "karigor-phone-smoke", url: process.env["KARIGOR_REAL_PHONE"]!, log: (l) => console.log(l) });
+    const dir = process.env["NIRMITO_REAL_PHONE_DIR"] || (await mkdtemp(join(tmpdir(), "karigor-real-phone-")));
+    const s = await makePhoneApps({ projectDir: dir, slug: process.env["NIRMITO_REAL_PHONE_SLUG"] || "karigor-phone-smoke", url: process.env["NIRMITO_REAL_PHONE"]!, log: (l) => console.log(l) });
     expect(s.error ?? "", s.runUrl).toBe("");
     expect(s.files?.map((f) => f.path.split("/").at(-1)).sort()).toEqual(["App-simulator.zip", "app-release.aab", "app-release.apk", "play-512.png"]);
   }, 60 * 60 * 1000);

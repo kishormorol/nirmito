@@ -1,4 +1,4 @@
-# Karigor, self-hosted: the chat UI and the whole kernel in one image.
+# Nirmito, self-hosted: the chat UI and the whole kernel in one image.
 # Projects live in the /data volume. Models: Ollama (default, free) or the Anthropic API (ANTHROPIC_API_KEY).
 FROM node:22-bookworm-slim
 
@@ -18,11 +18,11 @@ RUN mkdir -p /data && chown node:node /data
 USER node
 RUN git config --global user.name karigor && git config --global user.email karigor@localhost
 
-ENV KARIGOR_ROOT=/data \
-    KARIGOR_HOST=0.0.0.0 \
+ENV NIRMITO_ROOT=/data \
+    NIRMITO_HOST=0.0.0.0 \
     PORT=4321 \
-    KARIGOR_ADAPTER=ollama \
-    KARIGOR_DEPLOY=local \
+    NIRMITO_ADAPTER=ollama \
+    NIRMITO_DEPLOY=local \
     OLLAMA_HOST=http://ollama:11434
 VOLUME /data
 EXPOSE 4321 3000

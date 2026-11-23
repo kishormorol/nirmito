@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="light dark">
-<title>Karigor</title>
+<title>Nirmito</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230e1116'/%3E%3Cpath d='M9 23V9h3v6l6-6h4l-7 7 7 7h-4l-6-6v6z' fill='white'/%3E%3C/svg%3E">
 <style>
 :root {
@@ -222,7 +222,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
 </head>
 <body>
 <header>
-  <div class="brand"><div class="mark" aria-hidden="true">K</div><span>Karigor</span></div>
+  <div class="brand"><div class="mark" aria-hidden="true">K</div><span>Nirmito</span></div>
   <div class="title" id="title"></div>
   <button class="chip" id="cost" hidden></button>
   <button class="chip" id="credit" type="button" hidden></button>
@@ -304,7 +304,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
 <dialog id="keyDialog">
   <form class="sheet" method="dialog" id="keyForm">
     <h2 id="keyTitle">Your Anthropic key</h2>
-    <p id="keyText" style="margin:0;color:var(--muted);font-size:14px">This Karigor uses your own key. It stays in this browser tab and is sent only with the requests that need it; it is never saved on the server.</p>
+    <p id="keyText" style="margin:0;color:var(--muted);font-size:14px">This Nirmito uses your own key. It stays in this browser tab and is sent only with the requests that need it; it is never saved on the server.</p>
     <label class="field" id="keyLabel">Key <input id="keyInput" type="password" autocomplete="off" placeholder="sk-ant-…"></label>
     <div class="row"><button class="btn" value="save" id="keySave">Save</button><button class="btn quiet" value="cancel" id="keyCancel">Cancel</button></div>
   </form>
@@ -334,7 +334,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
     en: {
       message: "Message", ideaPh: "Describe your idea…", fixPh: "Something to fix or add?", changesPh: "What is different for you? (optional)",
       send: "Send", build: "Build", projects: "Projects", yourProjects: "Your projects", newIdea: "New idea", yourKey: "Your key", close: "Close",
-      keyTitle: "Your Anthropic key", keyText: "This Karigor uses your own key. It stays in this browser tab and is sent only with the requests that need it; it is never saved on the server.",
+      keyTitle: "Your Anthropic key", keyText: "This Nirmito uses your own key. It stays in this browser tab and is sent only with the requests that need it; it is never saved on the server.",
       key: "Key", save: "Save", cancel: "Cancel", otherLang: "বাংলা", otherLangName: "Switch to Bangla",
       wrong: (s) => `Something went wrong (${s})`, noExtra: "No extra cost", free: "Free", costOf: (c, s, b) => `${c} ${s} of ${b}`,
       demoLong: "Demo mode: the steps are real, the work is pretend. Nothing is actually built or put online.", demoShort: "Demo mode: the steps are real, the work is pretend.",
@@ -346,8 +346,8 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       buildingNext: (s) => `Building the next part: ${s}.`,
       addFiles: "Add files", filesOnly: (n) => `I added these files: ${n}. Please use them.`, filesWith: (n) => `(Files added: ${n})`,
       uploading: (n) => `Adding ${n}…`, cantAdd: (n, why) => `${n} was not added: ${why}`, yourFiles: (n) => `Your files (${n})`, filesHelp: "Pictures can be shown in the app; other files stay private.",
-      deleteProject: "Delete this project", deleteSure: "This removes the app and everything Karigor kept about it. It cannot be undone.", deleteYes: "Yes, delete it",
-      deleted: "Deleted.", deletedElsewhere: (u) => `Deleted from Karigor. The app is still online at ${u}; remove it from your hosting account if you no longer want it.`,
+      deleteProject: "Delete this project", deleteSure: "This removes the app and everything Nirmito kept about it. It cannot be undone.", deleteYes: "Yes, delete it",
+      deleted: "Deleted.", deletedElsewhere: (u) => `Deleted from Nirmito. The app is still online at ${u}; remove it from your hosting account if you no longer want it.`,
       signInTitle: "Your way in", signInText: "Your app has its own sign-in. Give your email and name to become its first admin; you get a one-time link to choose your password. Then add the people who work with you from People inside the app.",
       keyTitle: "Your access key", keyText: "This is a service other programs call. Each program sends an access key with every call. Get the first one here; it can make more keys for other programs and turn them off.", keyName: "Who will use it", getKey: "Get an access key", makingKey: "Making your key…",
       keyReady: "Copy this key now and keep it somewhere safe. It is shown only once; if it is lost, get a new one here.", copy: "Copy", copied: "Copied", readDocs: "How to call it (docs)",
@@ -358,21 +358,21 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       email: "Your email", yourNameOpt: "Your name", getLink: "Get my sign-in link", makingLink: "Making your sign-in link…",
       linkReady: "Open this link once to choose your password. It works one time only, so do not share it.", choosePassword: "Choose my password",
       needsBefore: "Built. It needs a few things from you before it goes online", needsLive: "Online, but it needs a few things from you",
-      onlyYou: "Only you can choose or provide these. They are stored privately where the app runs, never shown again, and never saved by Karigor.", hidden: "It needs a couple of hidden settings. Karigor can make them for you.",
+      onlyYou: "Only you can choose or provide these. They are stored privately where the app runs, never shown again, and never saved by Nirmito.", hidden: "It needs a couple of hidden settings. Nirmito can make them for you.",
       serviceNote: (svc) => `This comes from ${svc ? `a free ${svc} account` : "an outside service"} you create yourself.`, saveUpdate: "Save and update the app", makeThem: "Make them for me",
       saving: "Saving and updating the live app. This can take a few minutes.", stillNeeded: (x) => `Saved. Still needed: ${x}.`, allSet: "Saved. Everything it needs is in place.",
       notRight: "Not right?", shouldBe: "What should it be?", correct: (t) => `Correct: ${t}`, fix: "Fix", fixStarted: "Thanks. A fix round has started to apply it.", willFollow: "Thanks. Every step from now on will follow it.",
       decisions: (n) => `Decisions made for you (${n})`, notAsked: "You were not asked anything technical. If one of these is wrong for you, say so.",
       examples: ["A site where neighbours on my street lend each other tools", "A booking page for my tailoring shop, with reminders", "A simple tracker for my tuition students and their fees"],
       hello: "Tell me your idea. I'll build it, put it online, and keep it working.", helloText: "No technical questions. Describe what you want in your own words; I decide the rest and show you every decision so you can change it.",
-      how: "How it works", how1: ["You describe it", "In your own words, once."], how2: ["Karigor builds it", "Every step is checked: tests, reviews, a security scan."], how3: ["It goes live", "And stays working: problems become fixes."],
+      how: "How it works", how1: ["You describe it", "In your own words, once."], how2: ["Nirmito builds it", "Every step is checked: tests, reviews, a security scan."], how3: ["It goes live", "And stays working: problems become fixes."],
       startersTitle: "Or start from a ready-made idea", startersText: "Common needs in Bangladesh, written out in full. Pick one, then tell me what is different for you.",
       forWhom: (f) => `For ${f}`, fewer: "Show fewer", showAll: (n) => `Show all ${n}`, startingFrom: "Starting from ", addOrSend: "Add what is different for you, or send as it is.",
       readIt: "Read it", hide: "Hide", remove: "Remove", removeX: (t) => `Remove ${t}`, modelledOn: (x) => `Modelled on ${x}.`,
       fixRound: "Thanks. A fix round has started.", onList: "Thanks. It's on the list for the next fix round.", already: "That's already on the list.", tryingAgain: "Trying again.",
-      cantLoad: "Could not load that project.", loading: "Loading…", noProjects: "No projects yet.", cantReach: "Can't reach Karigor",
+      cantLoad: "Could not load that project.", loading: "Loading…", noProjects: "No projects yet.", cantReach: "Can't reach Nirmito",
       tierNames: { free: "free", cheap: "cheap", best: "best" },
-      emailTitle: "Sign in to Karigor", emailText: "Give your email and we send you a link that signs you in. No password to remember. New here? The same link makes your account.", emailLabel: "Your email", emailSend: "Send my link", emailSent: (e) => `Check ${e} for a sign-in link. It works once, for 15 minutes.`, emailAgain: "No email? Send again, or use another address", linkExpired: "That sign-in link was already used or is too old. Ask for a new one.",
+      emailTitle: "Sign in to Nirmito", emailText: "Give your email and we send you a link that signs you in. No password to remember. New here? The same link makes your account.", emailLabel: "Your email", emailSend: "Send my link", emailSent: (e) => `Check ${e} for a sign-in link. It works once, for 15 minutes.`, emailAgain: "No email? Send again, or use another address", linkExpired: "That sign-in link was already used or is too old. Ask for a new one.",
       changeByPointing: "Change it by pointing", pointAndChange: "Point and change",
       previewHelp: "Click a part to pick it. Drag a card, row or field to move it. Double-click words to change them. Drop a photo on a part to use it there. Nothing changes until you send.",
       pickedPart: (d) => `Picked: ${d}`, moveUp: "Move up", moveDown: "Move down", removeIt: "Remove it", whatChange: "What should change here?", addChange: "Add",
@@ -391,7 +391,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
     bn: {
       message: "বার্তা", ideaPh: "আপনার আইডিয়াটি লিখুন…", fixPh: "কিছু ঠিক করতে বা যোগ করতে চান?", changesPh: "আপনার ক্ষেত্রে কী আলাদা? (ইচ্ছা হলে)",
       send: "পাঠান", build: "তৈরি করুন", projects: "প্রকল্প", yourProjects: "আপনার প্রকল্পগুলো", newIdea: "নতুন আইডিয়া", yourKey: "আপনার কী", close: "বন্ধ করুন",
-      keyTitle: "আপনার Anthropic কী", keyText: "এই Karigor আপনার নিজের কী ব্যবহার করে। কী-টি এই ব্রাউজার ট্যাবেই থাকে, শুধু যে অনুরোধগুলোর দরকার সেগুলোর সঙ্গে পাঠানো হয়, আর সার্ভারে কখনো রাখা হয় না।",
+      keyTitle: "আপনার Anthropic কী", keyText: "এই Nirmito আপনার নিজের কী ব্যবহার করে। কী-টি এই ব্রাউজার ট্যাবেই থাকে, শুধু যে অনুরোধগুলোর দরকার সেগুলোর সঙ্গে পাঠানো হয়, আর সার্ভারে কখনো রাখা হয় না।",
       key: "কী", save: "সংরক্ষণ করুন", cancel: "বাতিল", otherLang: "English", otherLangName: "Switch to English",
       wrong: (s) => `কিছু একটা গোলমাল হয়েছে (${s})`, noExtra: "বাড়তি খরচ নেই", free: "বিনা খরচে", costOf: (c, s, b) => `${c} ${b}-এর মধ্যে ${s}`,
       demoLong: "ডেমো মোড: ধাপগুলো আসল, কাজটা অভিনয়। আসলে কিছু তৈরি হয় না বা অনলাইনে যায় না।", demoShort: "ডেমো মোড: ধাপগুলো আসল, কাজটা অভিনয়।",
@@ -403,8 +403,8 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       buildingNext: (s) => `পরের অংশ তৈরি হচ্ছে: ${s}।`,
       addFiles: "ফাইল যোগ করুন", filesOnly: (n) => `আমি এই ফাইলগুলো যোগ করেছি: ${n}। এগুলো ব্যবহার করুন।`, filesWith: (n) => `(যোগ করা ফাইল: ${n})`,
       uploading: (n) => `${n} যোগ হচ্ছে…`, cantAdd: (n, why) => `${n} যোগ হয়নি: ${why}`, yourFiles: (n) => `আপনার ফাইল (${n})`, filesHelp: "ছবি অ্যাপে দেখানো যায়; অন্য ফাইল গোপন থাকে।",
-      deleteProject: "এই প্রকল্প মুছে ফেলুন", deleteSure: "এতে অ্যাপটি আর Karigor-এ রাখা এর সবকিছু মুছে যাবে। আর ফেরত আনা যাবে না।", deleteYes: "হ্যাঁ, মুছে ফেলুন",
-      deleted: "মুছে ফেলা হয়েছে।", deletedElsewhere: (u) => `Karigor থেকে মুছে ফেলা হয়েছে। অ্যাপটি এখনো ${u} ঠিকানায় অনলাইনে আছে; আর না চাইলে আপনার হোস্টিং অ্যাকাউন্ট থেকে সরিয়ে দিন।`,
+      deleteProject: "এই প্রকল্প মুছে ফেলুন", deleteSure: "এতে অ্যাপটি আর Nirmito-এ রাখা এর সবকিছু মুছে যাবে। আর ফেরত আনা যাবে না।", deleteYes: "হ্যাঁ, মুছে ফেলুন",
+      deleted: "মুছে ফেলা হয়েছে।", deletedElsewhere: (u) => `Nirmito থেকে মুছে ফেলা হয়েছে। অ্যাপটি এখনো ${u} ঠিকানায় অনলাইনে আছে; আর না চাইলে আপনার হোস্টিং অ্যাকাউন্ট থেকে সরিয়ে দিন।`,
       signInTitle: "আপনার প্রবেশপথ", signInText: "আপনার অ্যাপের নিজস্ব সাইন ইন আছে। প্রথম অ্যাডমিন হতে আপনার ইমেইল আর নাম দিন; পাসওয়ার্ড বেছে নেওয়ার জন্য একবারের একটি লিংক পাবেন। তারপর অ্যাপের ভেতরে People থেকে আপনার সহকর্মীদের যোগ করুন।",
       keyTitle: "আপনার অ্যাক্সেস কী", keyText: "এটি অন্য প্রোগ্রামের জন্য একটি সেবা। প্রতিটি প্রোগ্রাম প্রতিবার একটি অ্যাক্সেস কী পাঠায়। প্রথম কীটি এখান থেকে নিন; এটি দিয়ে অন্য প্রোগ্রামের জন্য আরও কী বানানো আর বন্ধ করা যায়।", keyName: "কে ব্যবহার করবে", getKey: "অ্যাক্সেস কী দিন", makingKey: "কী তৈরি হচ্ছে…",
       keyReady: "কীটি এখনই কপি করে নিরাপদ জায়গায় রাখুন। এটি শুধু একবারই দেখানো হয়; হারিয়ে গেলে এখান থেকে নতুন একটি নিন।", copy: "কপি", copied: "কপি হয়েছে", readDocs: "কীভাবে ব্যবহার করবেন (ডকস)",
@@ -415,21 +415,21 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       email: "আপনার ইমেইল", yourNameOpt: "আপনার নাম", getLink: "আমার সাইন ইন লিংক দিন", makingLink: "সাইন ইন লিংক তৈরি হচ্ছে…",
       linkReady: "পাসওয়ার্ড বেছে নিতে এই লিংকটি একবার খুলুন। এটি শুধু একবারই কাজ করে, তাই কাউকে দেবেন না।", choosePassword: "পাসওয়ার্ড বেছে নিন",
       needsBefore: "তৈরি হয়ে গেছে। অনলাইনে যাওয়ার আগে আপনার কাছ থেকে কয়েকটি জিনিস দরকার", needsLive: "অনলাইনে আছে, তবে আপনার কাছ থেকে কয়েকটি জিনিস দরকার",
-      onlyYou: "এগুলো শুধু আপনিই বাছাই করতে বা দিতে পারেন। অ্যাপ যেখানে চলে সেখানে গোপনে রাখা হয়, আর কখনো দেখানো হয় না, Karigor-ও রাখে না।", hidden: "এর কয়েকটি গোপন সেটিং দরকার। Karigor আপনার হয়ে এগুলো তৈরি করে দিতে পারে।",
+      onlyYou: "এগুলো শুধু আপনিই বাছাই করতে বা দিতে পারেন। অ্যাপ যেখানে চলে সেখানে গোপনে রাখা হয়, আর কখনো দেখানো হয় না, Nirmito-ও রাখে না।", hidden: "এর কয়েকটি গোপন সেটিং দরকার। Nirmito আপনার হয়ে এগুলো তৈরি করে দিতে পারে।",
       serviceNote: (svc) => `এটি আসে ${svc ? `একটি বিনা খরচের ${svc} অ্যাকাউন্ট` : "একটি বাইরের সেবা"} থেকে, যা আপনি নিজে খুলবেন।`, saveUpdate: "সংরক্ষণ করে অ্যাপ হালনাগাদ করুন", makeThem: "আমার হয়ে তৈরি করে দিন",
       saving: "সংরক্ষণ করে চালু অ্যাপটি হালনাগাদ করা হচ্ছে। কয়েক মিনিট লাগতে পারে।", stillNeeded: (x) => `সংরক্ষণ হয়েছে। এখনো দরকার: ${x}।`, allSet: "সংরক্ষণ হয়েছে। যা যা দরকার সব আছে।",
       notRight: "ঠিক নয়?", shouldBe: "কী হওয়া উচিত?", correct: (t) => `সংশোধন: ${t}`, fix: "ঠিক করুন", fixStarted: "ধন্যবাদ। এটি প্রয়োগ করতে একটি ঠিক করার রাউন্ড শুরু হয়েছে।", willFollow: "ধন্যবাদ। এখন থেকে প্রতিটি ধাপ এটি মেনে চলবে।",
-      decisions: (n) => `আপনার হয়ে নেওয়া সিদ্ধান্ত (${n})`, notAsked: "আপনাকে কোনো কারিগরি প্রশ্ন করা হয়নি। এর কোনোটি আপনার জন্য ঠিক না হলে জানান।",
+      decisions: (n) => `আপনার হয়ে নেওয়া সিদ্ধান্ত (${n})`, notAsked: "আপনাকে কোনো নির্মিতি প্রশ্ন করা হয়নি। এর কোনোটি আপনার জন্য ঠিক না হলে জানান।",
       examples: ["আমার এলাকার প্রতিবেশীরা যেন একে অপরকে যন্ত্রপাতি ধার দিতে পারে, এমন একটি সাইট", "আমার দর্জির দোকানের জন্য একটি বুকিং পেজ, মনে করিয়ে দেওয়ার ব্যবস্থাসহ", "আমার টিউশনের ছাত্রছাত্রী আর তাদের বেতনের একটি সহজ হিসাব"],
-      hello: "আপনার আইডিয়াটি বলুন। আমি সেটি তৈরি করব, অনলাইনে তুলব, আর চালু রাখব।", helloText: "কোনো কারিগরি প্রশ্ন নেই। যা চান নিজের ভাষায় লিখুন; বাকিটা আমি ঠিক করব, আর প্রতিটি সিদ্ধান্ত দেখাব যাতে আপনি বদলাতে পারেন।",
-      how: "যেভাবে কাজ করে", how1: ["আপনি বলবেন", "নিজের ভাষায়, একবার।"], how2: ["Karigor তৈরি করবে", "প্রতিটি ধাপ যাচাই হয়: টেস্ট, পর্যালোচনা, নিরাপত্তা পরীক্ষা।"], how3: ["অ্যাপ চালু হবে", "আর চালু থাকবে: সমস্যা ধরা পড়লে ঠিক করা হবে।"],
+      hello: "আপনার আইডিয়াটি বলুন। আমি সেটি তৈরি করব, অনলাইনে তুলব, আর চালু রাখব।", helloText: "কোনো নির্মিতি প্রশ্ন নেই। যা চান নিজের ভাষায় লিখুন; বাকিটা আমি ঠিক করব, আর প্রতিটি সিদ্ধান্ত দেখাব যাতে আপনি বদলাতে পারেন।",
+      how: "যেভাবে কাজ করে", how1: ["আপনি বলবেন", "নিজের ভাষায়, একবার।"], how2: ["Nirmito তৈরি করবে", "প্রতিটি ধাপ যাচাই হয়: টেস্ট, পর্যালোচনা, নিরাপত্তা পরীক্ষা।"], how3: ["অ্যাপ চালু হবে", "আর চালু থাকবে: সমস্যা ধরা পড়লে ঠিক করা হবে।"],
       startersTitle: "অথবা তৈরি করা একটি আইডিয়া থেকে শুরু করুন", startersText: "বাংলাদেশের সাধারণ প্রয়োজনগুলো, পুরোটা লেখা। একটি বেছে নিন, তারপর বলুন আপনার ক্ষেত্রে কী আলাদা।",
       forWhom: (f) => f, fewer: "কম দেখান", showAll: (n) => `সবগুলো দেখান (${n})`, startingFrom: "শুরু হবে: ", addOrSend: "আপনার ক্ষেত্রে কী আলাদা লিখুন, অথবা যেমন আছে তেমন পাঠান।",
       readIt: "পড়ুন", hide: "লুকান", remove: "সরান", removeX: (t) => `${t} সরান`, modelledOn: (x) => `${x}-এর আদলে।`,
       fixRound: "ধন্যবাদ। একটি ঠিক করার রাউন্ড শুরু হয়েছে।", onList: "ধন্যবাদ। পরের ঠিক করার রাউন্ডের তালিকায় রাখা হলো।", already: "এটি আগেই তালিকায় আছে।", tryingAgain: "আবার চেষ্টা করা হচ্ছে।",
-      cantLoad: "প্রকল্পটি খোলা যায়নি।", loading: "খোলা হচ্ছে…", noProjects: "এখনো কোনো প্রকল্প নেই।", cantReach: "Karigor-এর সঙ্গে যোগাযোগ করা যাচ্ছে না",
+      cantLoad: "প্রকল্পটি খোলা যায়নি।", loading: "খোলা হচ্ছে…", noProjects: "এখনো কোনো প্রকল্প নেই।", cantReach: "Nirmito-এর সঙ্গে যোগাযোগ করা যাচ্ছে না",
       tierNames: { free: "বিনা খরচের", cheap: "সস্তা", best: "সেরা" },
-      emailAgain: "ইমেইল পাননি? আবার পাঠান, অথবা অন্য ঠিকানা দিন", emailTitle: "Karigor-এ সাইন ইন করুন", emailText: "আপনার ইমেইল দিন, আমরা সাইন ইন করার একটি লিংক পাঠাব। কোনো পাসওয়ার্ড মনে রাখতে হবে না। নতুন? একই লিংকে আপনার অ্যাকাউন্ট তৈরি হবে।", emailLabel: "আপনার ইমেইল", emailSend: "লিংক পাঠান", emailSent: (e) => `${e} ঠিকানায় সাইন ইন লিংক দেখুন। এটি একবার, ১৫ মিনিটের জন্য কাজ করে।`, linkExpired: "এই সাইন ইন লিংকটি আগেই ব্যবহার হয়েছে বা অনেক পুরোনো। নতুন একটি চান।",
+      emailAgain: "ইমেইল পাননি? আবার পাঠান, অথবা অন্য ঠিকানা দিন", emailTitle: "Nirmito-এ সাইন ইন করুন", emailText: "আপনার ইমেইল দিন, আমরা সাইন ইন করার একটি লিংক পাঠাব। কোনো পাসওয়ার্ড মনে রাখতে হবে না। নতুন? একই লিংকে আপনার অ্যাকাউন্ট তৈরি হবে।", emailLabel: "আপনার ইমেইল", emailSend: "লিংক পাঠান", emailSent: (e) => `${e} ঠিকানায় সাইন ইন লিংক দেখুন। এটি একবার, ১৫ মিনিটের জন্য কাজ করে।`, linkExpired: "এই সাইন ইন লিংকটি আগেই ব্যবহার হয়েছে বা অনেক পুরোনো। নতুন একটি চান।",
       changeByPointing: "দেখিয়ে বদলান", pointAndChange: "দেখিয়ে বদলান",
       previewHelp: "কোনো অংশ বাছতে তাতে ক্লিক করুন। কার্ড, সারি বা ঘর সরাতে টেনে নিন। লেখা বদলাতে দুবার ক্লিক করুন। কোনো অংশে ছবি ছেড়ে দিলে সেখানে সেই ছবি বসবে। পাঠানোর আগে কিছুই বদলায় না।",
       pickedPart: (d) => `বাছা হয়েছে: ${d}`, moveUp: "ওপরে সরান", moveDown: "নিচে সরান", removeIt: "সরিয়ে দিন", whatChange: "এখানে কী বদলাবে?", addChange: "যোগ করুন",

@@ -5,7 +5,7 @@ import { ignoreInProjectGit } from "./lock.js";
 import { ownerOnly } from "./platform.js";
 
 /**
- * The one setting value Karigor keeps: the key a hosted app accepts when Karigor asks it for the owner's
+ * The one setting value Nirmito keeps: the key a hosted app accepts when Nirmito asks it for the owner's
  * first sign-in link. Every other value lives only where the app runs. Kept readable by this user alone.
  */
 export const OWNER_LINK_SETTING = "OWNER_LINK_SECRET";

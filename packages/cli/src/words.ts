@@ -152,7 +152,7 @@ export const BANGLA: StoryWords = {
 
 export const storyWords = (lang: Lang = "en"): StoryWords => (lang === "bn" ? BANGLA : EN);
 
-/** The fixed sentences of `karigor status`. */
+/** The fixed sentences of `nirmito status`. */
 export interface StatusWords {
   project(id: string): string;
   idea(text: string): string;
@@ -189,14 +189,14 @@ export const STATUS_EN: StatusWords = {
   stopped: (r) => `Status: stopped. ${r ?? ""}`.trim(),
   paused: (r) => `Status: paused. ${r.charAt(0).toUpperCase()}${r.slice(1)}.`,
   waiting: () => "Status: waiting for you. It is built, and only needs a few things that only you can give:",
-  giveWith: (id) => `Give them with: karigor setup ${id}`,
+  giveWith: (id) => `Give them with: nirmito setup ${id}`,
   finished: (stage, c, h) => `Status: ${stage ? `a stage was added (round ${c})` : c > 0 ? `updated (fix round ${c})` : "finished"}. ${h ?? ""}`.trim(),
   link: (u) => `Link: ${u}`,
   roundGrow: (c) => `Round ${c} builds the next stage on top of what is live.`,
   roundFix: (c) => `This is fix round ${c}: problems seen after release are being fixed.`,
   stages: () => "Stages:",
   stageMark: (s) => (s === "built" ? "[built]   " : s === "building" ? "[building]" : "[later]   "),
-  growWith: (id) => `Build the next one with: karigor grow ${id}`,
+  growWith: (id) => `Build the next one with: nirmito grow ${id}`,
   liveVersion: (v, u) => `Live version: ${v}${u ? ` at ${u}` : ""}.`,
   missingSettings: () => "It is online but cannot be used until these settings are added where it is hosted:",
   openItems: (n) => `Problems and requests waiting to be handled: ${n}.`,
@@ -217,14 +217,14 @@ export const STATUS_BN: StatusWords = {
   stopped: (r) => `অবস্থা: থেমে গেছে। ${r ? reasonIn("bn", r) : ""}`.trim(),
   paused: (r) => `অবস্থা: বিরতি। ${reasonIn("bn", r)}।`,
   waiting: () => "অবস্থা: আপনার অপেক্ষায়। তৈরি হয়ে গেছে, শুধু আপনিই দিতে পারেন এমন কয়েকটি জিনিস দরকার:",
-  giveWith: (id) => `এগুলো দিন এভাবে: karigor setup ${id}`,
+  giveWith: (id) => `এগুলো দিন এভাবে: nirmito setup ${id}`,
   finished: (stage, c, h) => `অবস্থা: ${stage ? `একটি নতুন অংশ যোগ হয়েছে (রাউন্ড ${c})` : c > 0 ? `হালনাগাদ হয়েছে (ঠিক করার রাউন্ড ${c})` : "শেষ হয়েছে"}। ${h ?? ""}`.trim(),
   link: (u) => `লিংক: ${u}`,
   roundGrow: (c) => `রাউন্ড ${c}: চালু অ্যাপের ওপর পরের অংশ তৈরি হচ্ছে।`,
   roundFix: (c) => `এটি ঠিক করার রাউন্ড ${c}: চালু হওয়ার পর পাওয়া সমস্যাগুলো ঠিক করা হচ্ছে।`,
   stages: () => "অংশগুলো:",
   stageMark: (s) => (s === "built" ? "[তৈরি হয়েছে]" : s === "building" ? "[তৈরি হচ্ছে]" : "[পরে]"),
-  growWith: (id) => `পরের অংশ তৈরি করুন এভাবে: karigor grow ${id}`,
+  growWith: (id) => `পরের অংশ তৈরি করুন এভাবে: nirmito grow ${id}`,
   liveVersion: (v, u) => `চালু সংস্করণ: ${v}${u ? `, ${u}` : ""}।`,
   missingSettings: () => "এটি অনলাইনে আছে, কিন্তু যেখানে চলে সেখানে এই সেটিংগুলো না দেওয়া পর্যন্ত ব্যবহার করা যাবে না:",
   openItems: (n) => `যেসব সমস্যা আর অনুরোধ এখনো বাকি: ${n}টি।`,
@@ -255,7 +255,7 @@ const REASONS_BN: [RegExp, (...m: string[]) => string][] = [
   [/^the new version failed after going live; the previous version \((\S+)\) is back and a fix is queued$/, (v) => `নতুন সংস্করণ চালু হওয়ার পর সমস্যা করছিল; আগের সংস্করণ (${v}) ফিরিয়ে আনা হয়েছে আর ঠিক করার কাজ তালিকায় রাখা হয়েছে`],
   [/^the new version failed after going live; it was taken offline and a fix is queued$/, () => "নতুন সংস্করণ চালু হওয়ার পর সমস্যা করছিল; এটি অফলাইনে নেওয়া হয়েছে আর ঠিক করার কাজ তালিকায় রাখা হয়েছে"],
   [/^out of budget: ?(.*)$/, (x) => `বাজেট শেষ${x ? `: ${x}` : ""}`],
-  [/^the model's usage allowance is used up(?: \(it resets (.+?)\))?; nothing failed, and the work carries on with karigor resume after that$/, (at) => `মডেলের ব্যবহারের সীমা শেষ${at ? ` (আবার পাওয়া যাবে ${at})` : ""}; কিছু ব্যর্থ হয়নি, সীমা ফিরলে karigor resume দিলে কাজ চলবে`],
+  [/^the model's usage allowance is used up(?: \(it resets (.+?)\))?; nothing failed, and the work carries on with nirmito resume after that$/, (at) => `মডেলের ব্যবহারের সীমা শেষ${at ? ` (আবার পাওয়া যাবে ${at})` : ""}; কিছু ব্যর্থ হয়নি, সীমা ফিরলে nirmito resume দিলে কাজ চলবে`],
   [/^failed (\d+) times; retry budget exhausted$/, (n) => `${n} বার ব্যর্থ; আর চেষ্টার সুযোগ নেই`],
   [/^blocked: depends on "([^"]+)", which is not in the backlog$/, (d) => `আটকে আছে: "${d}"-এর ওপর নির্ভর করে, যা তালিকায় নেই`],
   [/^blocked: depends on "([^"]+)", which was (parked|dropped)$/, (d, s) => `আটকে আছে: "${d}"-এর ওপর নির্ভর করে, যা ${s === "parked" ? "আলাদা করে রাখা হয়েছে" : "বাদ দেওয়া হয়েছে"}`],
@@ -302,12 +302,12 @@ const PROGRESS_BN: [RegExp, (...m: string[]) => string][] = [
   [/^putting (\S+) on a preview \((\S+)\)$/, (v, t) => `${v} প্রিভিউতে তোলা হচ্ছে (${t})`],
   [/^the preview failed: (.*)$/, (x) => `প্রিভিউ ব্যর্থ: ${x}`],
   [/^putting (\S+) live$/, (v) => `${v} চালু করা হচ্ছে`],
-  [/^to sign in the first time: karigor admin-link (\S+) <your email> "<your name>"$/, (id) => `প্রথমবার সাইন ইন করতে: karigor admin-link ${id} <আপনার ইমেইল> "<আপনার নাম>"`],
+  [/^to sign in the first time: nirmito admin-link (\S+) <your email> "<your name>"$/, (id) => `প্রথমবার সাইন ইন করতে: nirmito admin-link ${id} <আপনার ইমেইল> "<আপনার নাম>"`],
   [/^live: (.+)$/, (x) => `চালু: ${x}`],
   [/^it still needs these settings before it can be used: (.+)$/, (x) => `ব্যবহারের আগে এখনো এই সেটিংগুলো দরকার: ${x}`],
   [/^could not revert (\S+): (.*)$/, (i, x) => `${i} ফিরিয়ে নেওয়া গেল না: ${x}`],
   [/^reverted (\S+)'s commits \((.+)\)$/, (i, r) => `${i}-এর পরিবর্তনগুলো ফিরিয়ে নেওয়া হলো (${reasonIn("bn", r!)})`],
-  [/^waiting for you: (.+) \(karigor setup (\S+)\)$/, (x, id) => `আপনার অপেক্ষায়: ${x} (karigor setup ${id})`],
+  [/^waiting for you: (.+) \(nirmito setup (\S+)\)$/, (x, id) => `আপনার অপেক্ষায়: ${x} (nirmito setup ${id})`],
   [/^new work item (\S+)$/, (i) => `নতুন কাজ: ${i}`],
   [/^fix round (\d+): starting$/, (n) => `ঠিক করার রাউন্ড ${n}: শুরু`],
   [/^fix round (\d+) ended: (\S+)(?: \((.+)\))?$/, (n, s, r) => `ঠিক করার রাউন্ড ${n} শেষ: ${STATUS_WORD_BN[s!] ?? s}${r ? ` (${reasonIn("bn", r)})` : ""}`],

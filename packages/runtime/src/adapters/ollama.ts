@@ -4,7 +4,7 @@ import type { ModelAdapter, ModelRequest, ModelResponse, Usage } from "./types.j
 export interface OllamaAdapterOptions {
   /** Defaults to `OLLAMA_HOST`, then the local default. */
   host?: string;
-  /** Model for decisions and reviews. Defaults to `KARIGOR_OLLAMA_MODEL`, then `qwen2.5:7b`. */
+  /** Model for decisions and reviews. Defaults to `NIRMITO_OLLAMA_MODEL`, then `qwen2.5:7b`. */
   judgmentModel?: string;
   /** Model for routine work. Defaults to the judgment model. */
   routineModel?: string;
@@ -45,8 +45,8 @@ export class OllamaAdapter implements ModelAdapter {
   constructor(private readonly o: OllamaAdapterOptions = {}) {
     this.host = (o.host ?? process.env["OLLAMA_HOST"] ?? OLLAMA_DEFAULTS.host).replace(/\/+$/, "");
     if (!/^https?:\/\//.test(this.host)) this.host = `http://${this.host}`;
-    this.judgmentModel = o.judgmentModel ?? process.env["KARIGOR_OLLAMA_MODEL"] ?? OLLAMA_DEFAULTS.model;
-    this.routineModel = o.routineModel ?? process.env["KARIGOR_OLLAMA_ROUTINE_MODEL"] ?? this.judgmentModel;
+    this.judgmentModel = o.judgmentModel ?? process.env["NIRMITO_OLLAMA_MODEL"] ?? OLLAMA_DEFAULTS.model;
+    this.routineModel = o.routineModel ?? process.env["NIRMITO_OLLAMA_ROUTINE_MODEL"] ?? this.judgmentModel;
     this.f = o.fetchImpl ?? fetch;
   }
 

@@ -69,7 +69,7 @@ describe("starters", () => {
     for (const s of STARTERS) expect(list).toContain(s.id);
     const one = renderStarter(findStarter("samity")!);
     expect(one).toContain("github.com/apache/fineract");
-    expect(one).toContain("karigor new --starter samity");
+    expect(one).toContain("nirmito new --starter samity");
   });
 
   it("starts a project from a starter with the person's changes as its idea", async () => {

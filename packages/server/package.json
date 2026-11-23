@@ -12,7 +12,8 @@
     }
   },
   "bin": {
-    "karigor-server": "./dist/bin.js"
+    "karigor-server": "./dist/bin.js",
+    "nirmito-server": "./dist/bin.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && node -e \"fs.chmodSync('dist/bin.js',0o755)\"",

@@ -1,4 +1,4 @@
-# docker compose up, then open http://localhost:4321/?token=<KARIGOR_TOKEN>
+# docker compose up, then open http://localhost:4321/?token=<NIRMITO_TOKEN>
 # First run: docker compose exec ollama ollama pull qwen2.5:7b
 services:
   karigor:
@@ -7,14 +7,14 @@ services:
       - "4321:4321"   # the chat UI
       - "3000:3000"   # the live app, when served from here
     environment:
-      KARIGOR_TOKEN: ${KARIGOR_TOKEN:?set KARIGOR_TOKEN to a long random string; it is the access link's secret}
-      KARIGOR_ADAPTER: ${KARIGOR_ADAPTER:-ollama}
-      KARIGOR_OLLAMA_MODEL: ${KARIGOR_OLLAMA_MODEL:-qwen2.5:7b}
+      NIRMITO_TOKEN: ${NIRMITO_TOKEN:-${KARIGOR_TOKEN:?set NIRMITO_TOKEN to a long random string; it is the access link's secret}}
+      NIRMITO_ADAPTER: ${NIRMITO_ADAPTER:-${KARIGOR_ADAPTER:-ollama}}
+      NIRMITO_OLLAMA_MODEL: ${NIRMITO_OLLAMA_MODEL:-${KARIGOR_OLLAMA_MODEL:-qwen2.5:7b}}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       VERCEL_TOKEN: ${VERCEL_TOKEN:-}
-      KARIGOR_DEPLOY: ${KARIGOR_DEPLOY:-local}
-      KARIGOR_SIGNUP: ${KARIGOR_SIGNUP:-}      # "open": anyone who opens the page signs up with a name
-      KARIGOR_URL: ${KARIGOR_URL:-}            # the address people use, for links made with add-person
+      NIRMITO_DEPLOY: ${NIRMITO_DEPLOY:-${KARIGOR_DEPLOY:-local}}
+      NIRMITO_SIGNUP: ${NIRMITO_SIGNUP:-${KARIGOR_SIGNUP:-}}      # "open": anyone who opens the page signs up with a name
+      NIRMITO_URL: ${NIRMITO_URL:-${KARIGOR_URL:-}}            # the address people use, for links made with add-person
     volumes:
       - karigor-data:/data
     depends_on:

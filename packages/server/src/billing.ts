@@ -39,7 +39,7 @@ export class PaddleProvider implements PaymentProvider {
       method: "POST",
       headers: { authorization: `Bearer ${this.o.apiKey}`, "content-type": "application/json" },
       body: JSON.stringify({
-        items: [{ quantity: 1, price: { name: `Karigor credit, USD ${o.usd}`, description: "Credit for building apps with Karigor", product_id: this.o.productId, unit_price: { amount: String(Math.round(o.usd * 100)), currency_code: "USD" }, tax_mode: "account_setting" } }],
+        items: [{ quantity: 1, price: { name: `Nirmito credit, USD ${o.usd}`, description: "Credit for building apps with Nirmito", product_id: this.o.productId, unit_price: { amount: String(Math.round(o.usd * 100)), currency_code: "USD" }, tax_mode: "account_setting" } }],
         custom_data: { personId: o.personId, usd: o.usd },
         collection_mode: "automatic",
       }),
@@ -101,14 +101,14 @@ export class SslCommerzProvider implements PaymentProvider {
       fail_url: `${base}/api/billing/return/sslcommerz`,
       cancel_url: `${base}/api/billing/return/sslcommerz`,
       ipn_url: `${base}/api/billing/notice/sslcommerz`,
-      cus_name: o.name || "Karigor user",
+      cus_name: o.name || "Nirmito user",
       cus_email: o.email || "no-email@karigor.invalid",
       cus_add1: "Bangladesh",
       cus_city: "Dhaka",
       cus_country: "Bangladesh",
       cus_phone: "01700000000",
       shipping_method: "NO",
-      product_name: "Karigor credit",
+      product_name: "Nirmito credit",
       product_category: "Software",
       product_profile: "non-physical-goods",
       value_a: o.personId,
@@ -129,7 +129,7 @@ export class SslCommerzProvider implements PaymentProvider {
     const v = (await res.json().catch(() => ({}))) as { status?: string; tran_id?: string; amount?: string; currency_type?: string; currency?: string; value_a?: string };
     if (!res.ok || !(v.status === "VALID" || v.status === "VALIDATED") || !v.tran_id || !v.value_a) return undefined;
     if ((v.currency_type ?? v.currency) !== "BDT") return undefined;
-    // The person is also in the transaction id Karigor made, so a changed value_a cannot move credit to someone else.
+    // The person is also in the transaction id Nirmito made, so a changed value_a cannot move credit to someone else.
     if (!v.tran_id.startsWith(`${v.value_a}-`)) return undefined;
     return { ref: `sslcommerz:${v.tran_id}`, personId: v.value_a, usd: round2(Number(v.amount) / this.o.bdtPerUsd) };
   }

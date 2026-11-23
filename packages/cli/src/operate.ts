@@ -43,7 +43,7 @@ export function feedbackSignal(text: string): Signal {
 }
 
 /**
- * A change the person made by pointing at the app in Karigor's preview (moving a part, changing its
+ * A change the person made by pointing at the app in Nirmito's preview (moving a part, changing its
  * words, dropping a photo). Its fingerprint starts with "edit:", so a fix round made only of these takes the fast lane.
  */
 export function editSignal(text: string): Signal {
@@ -304,15 +304,15 @@ export async function growOnce(o: Omit<RunOptions, "root" | "projectId"> & { roo
     const plan = await stagePlan(store, state);
     const why =
       state.status === "running" || (state.status === "waiting" && state.pausedReason)
-        ? "It is still being built; let that finish first (karigor resume if it was interrupted)."
+        ? "It is still being built; let that finish first (nirmito resume if it was interrupted)."
         : state.status === "waiting"
-          ? "It is waiting for settings first: karigor setup."
+          ? "It is waiting for settings first: nirmito setup."
           : state.status === "stopped"
-            ? "It stopped before finishing; karigor reopen, then karigor resume, then grow."
+            ? "It stopped before finishing; nirmito reopen, then nirmito resume, then grow."
             : !state.firstBuilt
               ? "The first version is not built yet."
               : !plan.next
-                ? "Every stage of the plan is built. To add more, describe it with karigor feedback."
+                ? "Every stage of the plan is built. To add more, describe it with nirmito feedback."
                 : "Nothing to start.";
     return { state, why };
   }
@@ -328,7 +328,7 @@ export async function growOnce(o: Omit<RunOptions, "root" | "projectId"> & { roo
  */
 export async function adminLink(deploy: DeployAdapter | undefined, email: string, name = "", hosted?: { projectDir: string; url?: string; fetcher?: typeof fetch }): Promise<{ ok: boolean; output: string }> {
   if (!(deploy instanceof LocalDeploy)) {
-    // A hosted app made from a recent template answers Karigor itself, with the key Karigor made for it.
+    // A hosted app made from a recent template answers Nirmito itself, with the key Nirmito made for it.
     const secret = hosted ? await ownerSecret(hosted.projectDir) : undefined;
     if (hosted?.url && secret) {
       try {
@@ -348,7 +348,7 @@ export async function adminLink(deploy: DeployAdapter | undefined, email: string
     return { ok: false, output: "Admin links are made here for apps that live on this computer. For a hosted app, run `pnpm admin:link <email>` in the project's workspace with DATABASE_URL and DATABASE_AUTH_TOKEN set to its database." };
   }
   const live = await deploy.current();
-  if (!live) return { ok: false, output: "Nothing is live yet. Build it first (karigor run or resume)." };
+  if (!live) return { ok: false, output: "Nothing is live yet. Build it first (nirmito run or resume)." };
   const dir = deploy.releaseDir(live.version);
   const { readFile } = await import("node:fs/promises");
   const pkg = JSON.parse(await readFile(join(dir, "package.json"), "utf8").catch(() => "{}")) as { scripts?: Record<string, string> };
@@ -359,13 +359,13 @@ export async function adminLink(deploy: DeployAdapter | undefined, email: string
 
 /**
  * The owner's first access key for a service (an `api` app): the live release's own `key:new` script on
- * this computer, or the hosted service's `/owner-key` with the secret Karigor made for it. The key is shown once.
+ * this computer, or the hosted service's `/owner-key` with the secret Nirmito made for it. The key is shown once.
  */
 export async function ownerAccessKey(deploy: DeployAdapter | undefined, name = "", hosted?: { projectDir: string; url?: string; fetcher?: typeof fetch }): Promise<{ ok: boolean; key?: string; output: string }> {
   const who = name.trim().slice(0, 100) || "Owner";
   if (!(deploy instanceof LocalDeploy)) {
     const secret = hosted ? await ownerSecret(hosted.projectDir) : undefined;
-    if (!hosted?.url || !secret) return { ok: false, output: "This service's first key can only be made once it is online and Karigor holds its owner secret." };
+    if (!hosted?.url || !secret) return { ok: false, output: "This service's first key can only be made once it is online and Nirmito holds its owner secret." };
     try {
       const res = await (hosted.fetcher ?? fetch)(`${hosted.url.replace(/\/$/, "")}/owner-key`, {
         method: "POST",
@@ -381,7 +381,7 @@ export async function ownerAccessKey(deploy: DeployAdapter | undefined, name = "
     }
   }
   const live = await deploy.current();
-  if (!live) return { ok: false, output: "Nothing is live yet. Build it first (karigor run or resume)." };
+  if (!live) return { ok: false, output: "Nothing is live yet. Build it first (nirmito run or resume)." };
   const dir = deploy.releaseDir(live.version);
   const { readFile } = await import("node:fs/promises");
   const pkg = JSON.parse(await readFile(join(dir, "package.json"), "utf8").catch(() => "{}")) as { scripts?: Record<string, string> };
@@ -424,7 +424,7 @@ export async function projectPhoneApps(o: { store: FsStore; deploy?: DeployAdapt
 
 /**
  * Run a hosted app's due scheduled jobs, as `serve` does on this computer, so jobs run more often than
- * the free plan's once-a-day cron. Karigor signs with the owner key it already keeps.
+ * the free plan's once-a-day cron. Nirmito signs with the owner key it already keeps.
  */
 export async function runHostedJobs(store: FsStore, state: ProjectState, jobsPath: string | undefined, fetcher: typeof fetch = fetch): Promise<string[]> {
   if (!jobsPath) return [];

@@ -63,7 +63,7 @@ export interface Profile {
   capabilities?: Capabilities;
   /** Markdown the architect and developer read: conventions, where things go, how to test. */
   stackGuide: string;
-  /** Path that runs the app's due scheduled jobs when called with `Authorization: Bearer <CRON_SECRET>`; `karigor serve` calls it on this computer. */
+  /** Path that runs the app's due scheduled jobs when called with `Authorization: Bearer <CRON_SECRET>`; `nirmito serve` calls it on this computer. */
   jobsPath?: string;
   /** Path a running release answers with a 2xx when it is healthy. */
   healthPath?: string;

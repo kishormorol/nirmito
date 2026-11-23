@@ -95,9 +95,9 @@ export class Workspace {
     await this.must(["clean", "-fdq"], "clean");
   }
 
-  /** The commit whose message carries `Karigor-Key: <key>`, if a previous attempt already committed. */
+  /** The commit whose message carries `Nirmito-Key: <key>`, if a previous attempt already committed. */
   async commitForKey(key: string): Promise<{ sha: string; parent: string } | undefined> {
-    const out = await this.must(["log", "--format=%H %P", "--fixed-strings", `--grep=Karigor-Key: ${key}`], "git log");
+    const out = await this.must(["log", "--format=%H %P", "--fixed-strings", `--grep=Nirmito-Key: ${key}`], "git log");
     const line = out.split("\n").find(Boolean);
     if (!line) return undefined;
     const [sha, parent] = line.trim().split(" ");

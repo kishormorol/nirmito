@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
 # Turns a fresh Ubuntu server (an Oracle Cloud "Always Free" Ampere machine works) into a public
-# Karigor: people sign up in the browser, build by chatting, and use their apps at their own addresses.
+# Nirmito: people sign up in the browser, build by chatting, and use their apps at their own addresses.
 #
-#   curl -fsSL https://raw.githubusercontent.com/kishormorol/karigor/main/hosting/setup.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/kishormorol/nirmito/main/hosting/setup.sh | bash
 #
 # Without a domain it uses <your-ip>.sslip.io, which needs nothing set up. With one, point
-# karigor.example.com and *.apps.example.com at this server, then run:
-#   KARIGOR_DOMAIN=karigor.example.com KARIGOR_APPS_DOMAIN=apps.example.com bash setup.sh
+# nirmito.example.com and *.apps.example.com at this server, then run:
+#   NIRMITO_DOMAIN=nirmito.example.com NIRMITO_APPS_DOMAIN=apps.example.com bash setup.sh
 # To sign people in by email, give credit or take payments, add those settings (listed by
-# `karigor-server --help`) to /opt/karigor/hosting/.env and run it again.
-# Running it again updates Karigor and keeps everyone's projects.
+# `nirmito-server --help`) to /opt/nirmito/hosting/.env and run it again.
+# Running it again updates Nirmito and keeps everyone's projects.
 set -euo pipefail
 
-DIR=/opt/karigor
-MODEL=${KARIGOR_OLLAMA_MODEL:-qwen2.5:7b}
+DIR=/opt/nirmito
+[ -d /opt/karigor/.git ] && DIR=/opt/karigor   # installed under the old name
+MODEL=${NIRMITO_OLLAMA_MODEL:-qwen2.5:7b}
 
 echo "==> Installing Docker and git"
 if ! command -v docker >/dev/null; then curl -fsSL https://get.docker.com | sudo sh; fi
@@ -25,25 +26,27 @@ for port in 80 443; do
 done
 if command -v netfilter-persistent >/dev/null; then sudo netfilter-persistent save >/dev/null; fi
 
-echo "==> Getting Karigor"
-if [ -d "$DIR/.git" ]; then sudo git -C "$DIR" pull --ff-only; else sudo git clone https://github.com/kishormorol/karigor "$DIR"; fi
+echo "==> Getting Nirmito"
+if [ -d "$DIR/.git" ]; then sudo git -C "$DIR" pull --ff-only; else sudo git clone https://github.com/kishormorol/nirmito "$DIR"; fi
 cd "$DIR/hosting"
 
 if [ ! -f .env ]; then
   ip=$(curl -fsS https://api.ipify.org)
   base="${ip//./-}.sslip.io"
-  domain=${KARIGOR_DOMAIN:-karigor.$base}
-  apps=${KARIGOR_APPS_DOMAIN:-$base}
+  domain=${NIRMITO_DOMAIN:-nirmito.$base}
+  apps=${NIRMITO_APPS_DOMAIN:-$base}
   sudo tee .env >/dev/null <<ENV
-KARIGOR_TOKEN=$(openssl rand -hex 24)
-KARIGOR_DOMAIN=$domain
-KARIGOR_APPS_DOMAIN=$apps
-KARIGOR_SIGNUP=open
-KARIGOR_OLLAMA_MODEL=$MODEL
+NIRMITO_TOKEN=$(openssl rand -hex 24)
+NIRMITO_DOMAIN=$domain
+NIRMITO_APPS_DOMAIN=$apps
+NIRMITO_SIGNUP=open
+NIRMITO_OLLAMA_MODEL=$MODEL
 ENV
   sudo chmod 600 .env
 fi
 set -a; . <(sudo cat .env); set +a
+# An .env written under the old name.
+: "${NIRMITO_TOKEN:=${KARIGOR_TOKEN:-}}" "${NIRMITO_DOMAIN:=${KARIGOR_DOMAIN:-}}" "${NIRMITO_APPS_DOMAIN:=${KARIGOR_APPS_DOMAIN:-}}"
 
 echo "==> Building and starting (the first build takes several minutes)"
 sudo docker compose up -d --build
@@ -53,12 +56,12 @@ sudo docker compose exec -T ollama ollama pull "$MODEL"
 
 cat <<DONE
 
-Karigor is running.
+Nirmito is running.
 
-  Everyone:  https://$KARIGOR_DOMAIN
-             (they sign up with a name and build; their apps appear at https://a<number>.$KARIGOR_APPS_DOMAIN)
+  Everyone:  https://$NIRMITO_DOMAIN
+             (they sign up with a name and build; their apps appear at https://a<number>.$NIRMITO_APPS_DOMAIN)
 
-  You:       https://$KARIGOR_DOMAIN/?token=$KARIGOR_TOKEN
+  You:       https://$NIRMITO_DOMAIN/?token=$NIRMITO_TOKEN
              (sees every project and manages People; keep it private)
 
 The first visit can take a minute while the secure certificate is made.

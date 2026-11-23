@@ -352,8 +352,8 @@ describe("VercelDeploy", () => {
   });
 });
 
-/** Real install, real Next.js build and start. Run with KARIGOR_REAL_DEPLOY=1; needs the network once. */
-describe.runIf(process.env["KARIGOR_REAL_DEPLOY"] === "1")("LocalDeploy (live, web-app profile)", () => {
+/** Real install, real Next.js build and start. Run with NIRMITO_REAL_DEPLOY=1; needs the network once. */
+describe.runIf(process.env["NIRMITO_REAL_DEPLOY"] === "1")("LocalDeploy (live, web-app profile)", () => {
   it("previews, promotes and verifies the real scaffold", async () => {
     const { webApp } = await import("@karigor/profiles");
     const projectDir = await mkdtemp(join(tmpdir(), "karigor-live-deploy-"));
@@ -382,7 +382,7 @@ describe.runIf(process.env["KARIGOR_REAL_DEPLOY"] === "1")("LocalDeploy (live, w
 });
 
 /** The api profile through the same path: real install, migrations, type check, serve, health, a key and a call. */
-describe.runIf(process.env["KARIGOR_REAL_DEPLOY"] === "1")("LocalDeploy (live, api profile)", () => {
+describe.runIf(process.env["NIRMITO_REAL_DEPLOY"] === "1")("LocalDeploy (live, api profile)", () => {
   it("previews, promotes and verifies the real scaffold, and the release makes working keys", async () => {
     const { api } = await import("@karigor/profiles");
     const { LocalSandbox } = await import("@karigor/sandbox");
@@ -402,7 +402,7 @@ describe.runIf(process.env["KARIGOR_REAL_DEPLOY"] === "1")("LocalDeploy (live, a
     expect(await (await fetch(`${p.url}/health`)).json()).toEqual({ ok: true });
     const promoted = await deploy.promote({ ...r, preview: p });
     expect(promoted.ok).toBe(true);
-    // what `karigor access-key` runs for a service on this computer
+    // what `nirmito access-key` runs for a service on this computer
     const live = await deploy.current();
     const { run: runCommand } = await import("@karigor/sandbox");
     const k = await runCommand("pnpm", ["-s", "key:new", "Owner"], { cwd: deploy.releaseDir(live!.version), env: await deploy.settingsEnv(), timeoutMs: 120_000 });

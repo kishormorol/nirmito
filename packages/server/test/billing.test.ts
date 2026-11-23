@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
-import { balanceOf, createKarigorServer, PaddleProvider, People, SslCommerzProvider, type KarigorServer } from "../src/index.js";
+import { balanceOf, createNirmitoServer, PaddleProvider, People, SslCommerzProvider, type NirmitoServer } from "../src/index.js";
 
 const NOW = 1_794_000_000_000;
 const SECRET = "test-webhook-secret";
@@ -53,7 +53,7 @@ describe("SSLCommerz", () => {
     return { p: new SslCommerzProvider({ storeId: "test-store", storePassword: "test-store-pass", bdtPerUsd: 120, publicUrl: "https://karigor.example.com/", sandbox: true, fetchImpl: f }), seen };
   }
 
-  it("asks for the price in taka and sends notices back to Karigor", async () => {
+  it("asks for the price in taka and sends notices back to Nirmito", async () => {
     const { p, seen } = ssl({});
     expect(await p.checkout({ personId: "p1", name: "Rina", usd: 5 })).toEqual({ url: "https://sandbox.sslcommerz.com/pay/1" });
     const form = new URLSearchParams(seen[0]!.split(" ").slice(2).join(" "));
@@ -74,7 +74,7 @@ describe("SSLCommerz", () => {
 });
 
 describe("credit from payments, on the server", { timeout: 60_000 }, () => {
-  const open: KarigorServer[] = [];
+  const open: NirmitoServer[] = [];
   afterEach(async () => {
     for (const k of open.splice(0)) await new Promise((r) => k.server.close(r));
   });
@@ -84,7 +84,7 @@ describe("credit from payments, on the server", { timeout: 60_000 }, () => {
     const people = new People(root);
     const { person, token } = await people.add("Rina", { email: "rina@example.com" });
     const paddle = new PaddleProvider({ apiKey: "k", productId: "p", webhookSecret: SECRET, now: () => Date.now() });
-    const k = createKarigorServer({ root, adapter: "demo", token: "admin-token", metered: { marginPct: 20 }, billing: { providers: [paddle], packs: [5, 10] } });
+    const k = createNirmitoServer({ root, adapter: "demo", token: "admin-token", metered: { marginPct: 20 }, billing: { providers: [paddle], packs: [5, 10] } });
     open.push(k);
     await new Promise<void>((r) => k.server.listen(0, "127.0.0.1", r));
     const base = `http://127.0.0.1:${(k.server.address() as AddressInfo).port}`;

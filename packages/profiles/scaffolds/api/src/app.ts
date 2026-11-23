@@ -51,7 +51,7 @@ export function createApp(database: Db = defaultDb) {
   app.get("/docs", (c) => c.html(docsPage(base(c.req.url))));
   app.get("/openapi.json", (c) => c.json(openapi(base(c.req.url))));
 
-  // Karigor asks here for the owner's first key (src/server/owner-key.ts). Not listed in the docs on purpose.
+  // Nirmito asks here for the owner's first key (src/server/owner-key.ts). Not listed in the docs on purpose.
   app.post("/owner-key", async (c) => {
     if (!ownerAuthorized(c.req.header("authorization"))) return c.json({ error: "not allowed" }, 401);
     const r = await ownerKey(await c.req.json().catch(() => ({})), c.var.db);

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { homedir } from "node:os";
+import { defaultProjectsRoot, readOldSettings } from "@karigor/store";
 import { join } from "node:path";
 import { Command } from "commander";
 import { FsStore, ideaLanguage, languageOf, queueInbox, runningPid, type ProjectState } from "@karigor/store";
@@ -12,6 +12,8 @@ import { findStarter, ideaFor, renderStarter, renderStarters } from "./starters.
 import { isLang, progressIn, type Lang } from "./words.js";
 import { localizeHelp } from "./help-bn.js";
 
+readOldSettings();
+
 /** The language of this command's messages, settled before it runs: --lang, else the project's own. */
 let lang: Lang = "en";
 /** Print a progress line in that language. */
@@ -19,13 +21,13 @@ const say = (l: string) => console.log(progressIn(lang, l));
 const runOptions = (root: string, projectId: string, o: RunFlags) => setupRun(root, projectId, o, { log: say });
 
 const program = new Command();
-const defaultRoot = process.env["KARIGOR_ROOT"] ?? join(homedir(), ".karigor", "projects");
+const defaultRoot = process.env["NIRMITO_ROOT"] ?? defaultProjectsRoot();
 
-program.name("karigor").description("Software agents that take an idea to deployed, maintained software.").version("0.0.1");
+program.name("nirmito").description("Software agents that take an idea to deployed, maintained software.").version("0.0.1");
 program.option("--root <dir>", "where projects live", defaultRoot);
-program.option("--lang <lang>", "en or bn: the language Karigor writes to you in (default: the project's own language; KARIGOR_LANG)", process.env["KARIGOR_LANG"]);
+program.option("--lang <lang>", "en or bn: the language Nirmito writes to you in (default: the project's own language; NIRMITO_LANG)", process.env["NIRMITO_LANG"]);
 
-/** The language asked for with --lang or KARIGOR_LANG, if any. */
+/** The language asked for with --lang or NIRMITO_LANG, if any. */
 const askedLang = (): Lang | undefined => {
   const l = program.opts<{ lang?: string }>().lang;
   if (l === undefined) return undefined;
@@ -48,7 +50,7 @@ runFlags(
   program
     .command("new")
     .argument("[idea]", "the idea, in plain language; with --starter, your changes to the ready-made idea")
-    .option("--starter <id>", "start from a ready-made idea (see karigor starters)")
+    .option("--starter <id>", "start from a ready-made idea (see nirmito starters)")
     .option("--run", "start building immediately", false),
 )
   .description("record an idea as a new project")
@@ -59,7 +61,7 @@ runFlags(
     const projectId = await createProject(root, ideaFor(idea, o.starter, lang));
     console.log(lang === "bn" ? `প্রকল্প তৈরি হলো: ${projectId}` : `Created project ${projectId}`);
     if (o.run) await run(root, projectId, o);
-    else console.log(lang === "bn" ? `এরপর: karigor run ${projectId}` : `Next: karigor run ${projectId}`);
+    else console.log(lang === "bn" ? `এরপর: nirmito run ${projectId}` : `Next: nirmito run ${projectId}`);
   });
 
 program
@@ -70,7 +72,7 @@ program
     const lang = askedLang() ?? "en";
     if (id === undefined) return console.log(renderStarters(lang));
     const starter = findStarter(id);
-    if (!starter) throw new Error(`there is no ready-made idea called "${id}"; karigor starters lists them`);
+    if (!starter) throw new Error(`there is no ready-made idea called "${id}"; nirmito starters lists them`);
     console.log(renderStarter(starter, lang));
   });
 
@@ -97,21 +99,21 @@ program
   .command("feedback")
   .argument("<projectId>")
   .argument("<text>", "what is wrong or what you would like, in your own words")
-  .description("tell Karigor about a problem or a wish; it becomes work for the next fix round")
+  .description("tell Nirmito about a problem or a wish; it becomes work for the next fix round")
   .action(async (projectId: string, text: string) => {
     const store = await FsStore.open(program.opts<{ root: string }>().root, projectId);
     const bn = (await langFor(store)) === "bn";
     if (await runningPid(store.dir)) {
       await queueInbox(store.dir, { kind: "feedback", text });
-      console.log(bn ? "ধন্যবাদ। Karigor এখন এই প্রকল্পে কাজ করছে, তাই আপনার বার্তাটি রাখা হলো; এই রাউন্ড শেষ হলেই পড়া হবে।" : "Thanks. Karigor is working on this project right now, so your message is saved and will be read as soon as this round finishes.");
+      console.log(bn ? "ধন্যবাদ। Nirmito এখন এই প্রকল্পে কাজ করছে, তাই আপনার বার্তাটি রাখা হলো; এই রাউন্ড শেষ হলেই পড়া হবে।" : "Thanks. Nirmito is working on this project right now, so your message is saved and will be read as soon as this round finishes.");
       return;
     }
     const [id] = await recordSignals(store, [feedbackSignal(text)]);
     console.log(
       id
         ? bn
-          ? `ধন্যবাদ। ${id} হিসেবে রাখা হলো। এখনই ঠিক করাতে karigor fix ${projectId} চালান, অথবা karigor serve / watch চালু রাখলে নিজে থেকেই ধরা হবে।`
-          : `Thanks. Noted as ${id}. Run karigor fix ${projectId} to handle it now, or leave karigor serve / watch running and it will be picked up.`
+          ? `ধন্যবাদ। ${id} হিসেবে রাখা হলো। এখনই ঠিক করাতে nirmito fix ${projectId} চালান, অথবা nirmito serve / watch চালু রাখলে নিজে থেকেই ধরা হবে।`
+          : `Thanks. Noted as ${id}. Run nirmito fix ${projectId} to handle it now, or leave nirmito serve / watch running and it will be picked up.`
         : bn ? "এটি আগেই তালিকায় আছে।" : "That is already on the list.",
     );
   });
@@ -119,16 +121,16 @@ program
 program
   .command("correct")
   .argument("<projectId>")
-  .argument("<decisionId>", "the decision's id from karigor status, like a3")
+  .argument("<decisionId>", "the decision's id from nirmito status, like a3")
   .argument("<text>", "what it should be instead")
-  .description("correct a decision Karigor made on your behalf")
+  .description("correct a decision Nirmito made on your behalf")
   .action(async (projectId: string, decisionId: string, text: string) => {
     const store = await FsStore.open(program.opts<{ root: string }>().root, projectId);
     const r = await correctAssumption(store, decisionId, text);
     console.log(
       lang === "bn"
-        ? r.workItemId ? `লিখে রাখা হলো। পরিবর্তনটি ${r.workItemId} হিসেবে তালিকায় আছে; এখনই প্রয়োগ করতে karigor fix ${projectId} চালান।` : "লিখে রাখা হলো। এখন থেকে প্রতিটি ধাপ এটি মেনে চলবে।"
-        : r.workItemId ? `Noted. The change is queued as ${r.workItemId}; run karigor fix ${projectId} to apply it now.` : "Noted. Every step from now on will follow it.",
+        ? r.workItemId ? `লিখে রাখা হলো। পরিবর্তনটি ${r.workItemId} হিসেবে তালিকায় আছে; এখনই প্রয়োগ করতে nirmito fix ${projectId} চালান।` : "লিখে রাখা হলো। এখন থেকে প্রতিটি ধাপ এটি মেনে চলবে।"
+        : r.workItemId ? `Noted. The change is queued as ${r.workItemId}; run nirmito fix ${projectId} to apply it now.` : "Noted. Every step from now on will follow it.",
     );
   });
 
@@ -231,7 +233,7 @@ runFlags(program.command("setup").argument("<projectId>"))
 program
   .command("dismiss")
   .argument("<projectId>")
-  .argument("<workItemId>", "from karigor status")
+  .argument("<workItemId>", "from nirmito status")
   .option("--reason <text>", "why it no longer needs doing", "no longer needed")
   .description("close a reported problem or request that no longer needs doing")
   .action(async (projectId: string, workItemId: string, o: { reason: string }) => {
@@ -243,11 +245,11 @@ program
 program
   .command("reopen")
   .argument("<projectId>")
-  .description("put a stopped project back to work: parked items return, then karigor resume carries on")
+  .description("put a stopped project back to work: parked items return, then nirmito resume carries on")
   .action(async (projectId: string) => {
     const store = await FsStore.open(program.opts<{ root: string }>().root, projectId);
     const items = await reopenProject(store);
-    console.log(`Reopened${items.length ? `; back on the list: ${items.join(", ")}` : ""}. Run karigor resume ${projectId} to carry on.`);
+    console.log(`Reopened${items.length ? `; back on the list: ${items.join(", ")}` : ""}. Run nirmito resume ${projectId} to carry on.`);
   });
 
 program
@@ -259,7 +261,7 @@ program
     const changes = await installUiKit(store);
     const done = changes.filter((c) => !c.includes("left as it is"));
     for (const c of changes.filter((c) => c.includes("left as it is"))) console.log(`Note: ${c}.`);
-    if (done.length) console.log(`Done: ${done.join(", ")}. To restyle the screens: karigor feedback ${projectId} "..." then karigor fix ${projectId}.`);
+    if (done.length) console.log(`Done: ${done.join(", ")}. To restyle the screens: nirmito feedback ${projectId} "..." then nirmito fix ${projectId}.`);
     else if (!changes.length) console.log("It already has the current UI kit.");
   });
 
@@ -276,7 +278,7 @@ runFlags(program.command("fix").argument("<projectId>"))
 
 runFlags(program.command("grow").argument("<projectId>"))
   .option("--all", "keep going until every stage is built", false)
-  .description("build the next stage of the plan on top of the live app (karigor status lists the stages)")
+  .description("build the next stage of the plan on top of the live app (nirmito status lists the stages)")
   .action(async (projectId: string, o: RunFlags & { all?: boolean }) => {
     const root = program.opts<{ root: string }>().root;
     const opts = await runOptions(root, projectId, o);
@@ -295,7 +297,7 @@ runFlags(program.command("grow").argument("<projectId>"))
         break;
       }
       if (!o.all) {
-        console.log(`\nNext stage: ${plan.next.name}: ${plan.next.goal}. Try the app first, then run karigor grow ${projectId} again.`);
+        console.log(`\nNext stage: ${plan.next.name}: ${plan.next.goal}. Try the app first, then run nirmito grow ${projectId} again.`);
         break;
       }
     }
@@ -440,7 +442,7 @@ program
     const store = await FsStore.open(program.opts<{ root: string }>().root, projectId);
     await store.appendEvent({ type: "item-status", by: "user", itemId, status: "todo", reason: "unparked by the user" });
     await store.commit(`karigor: user unparked ${itemId}`);
-    console.log(`${itemId} is back in the backlog. Run karigor resume ${projectId} to continue.`);
+    console.log(`${itemId} is back in the backlog. Run nirmito resume ${projectId} to continue.`);
   });
 
 // Messages follow --lang, else the language of the project the command is about.
@@ -453,10 +455,10 @@ program.hook("preAction", async (_program, action) => {
   if (store) lang = await langFor(store);
 });
 
-// Help is written before any command runs, so it follows --lang or KARIGOR_LANG only.
+// Help is written before any command runs, so it follows --lang or NIRMITO_LANG only.
 const helpLang = (() => {
   const i = process.argv.findIndex((a) => a === "--lang" || a.startsWith("--lang="));
-  const v = i < 0 ? process.env["KARIGOR_LANG"] : process.argv[i]!.includes("=") ? process.argv[i]!.split("=")[1] : process.argv[i + 1];
+  const v = i < 0 ? process.env["NIRMITO_LANG"] : process.argv[i]!.includes("=") ? process.argv[i]!.split("=")[1] : process.argv[i + 1];
   return v === "bn" ? "bn" : "en";
 })();
 if (helpLang === "bn") localizeHelp(program);

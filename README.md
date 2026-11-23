@@ -1,14 +1,14 @@
-# Karigor
+# Nirmito
 
-**Karigor** (Bangla: *craftsperson*) is free, open-source software in which a team of AI agents takes an idea from a person with no technical knowledge all the way to deployed, maintained software. After the idea and a one-time budget choice, no human is involved. Nobody is ever asked a technical question.
+**Nirmito** (Bangla: *built*) is free, open-source software in which a team of AI agents takes an idea from a person with no technical knowledge all the way to deployed, maintained software. After the idea and a one-time budget choice, no human is involved. Nobody is ever asked a technical question.
 
 <p align="center">
-  <img src="docs/media/karigor-demo.gif" width="720" alt="Karigor's chat page: an idea for a tool-lending site is typed in, Karigor reports writing the spec, designing, planning, building and putting it online, then shows it is live">
+  <img src="docs/media/karigor-demo.gif" width="720" alt="Nirmito's chat page: an idea for a tool-lending site is typed in, Nirmito reports writing the spec, designing, planning, building and putting it online, then shows it is live">
   <br>
   <sub>A run in the chat UI on the free <code>demo</code> adapter (no model, no cost: the steps are real, the work is pretend). Website: <a href="https://karigor-ten.vercel.app">karigor-ten.vercel.app</a></sub>
 </p>
 
-Plenty of tools generate code from a prompt. Karigor is different in two ways:
+Plenty of tools generate code from a prompt. Nirmito is different in two ways:
 
 1. **It owns the whole lifecycle.** Specify, design, plan, build, verify, release, and then watch production and fix what breaks. Not "here is a repo, good luck."
 2. **Reliability comes from process, not trust.** A small, deterministic kernel runs a real software process (sprints, phase gates, a skeptic who can only object) and no step moves forward without mechanical evidence: tests green, security scan clean, a healthy preview, a verified rollback. Agents will make mistakes; the gates stop them reaching you.
@@ -19,11 +19,11 @@ It is designed to cost nothing to try. Every step has a zero-dollar path (local 
 
 All six sub-projects of the first roadmap are in: the kernel, intake, the build crew, deploy and operate, the maintenance loop, and the chat UI with a Docker self-host.
 
-On 20 October 2026 a real run on a Claude Code login took "a page where my family keeps one shared shopping list" from idea to Vercel: the `linear` process, 12 backlog items built and reviewed, one lint failure caught and fixed, a preview checked behind Vercel's login, then promoted to a public `*.vercel.app` address. It cost nothing extra on the subscription (about USD 6.48 at API prices). The same run exposed real gaps, now fixed: Vercel needed the project created first and a framework declared; a protected preview's redirect to the login page must not count as healthy; and promotion must wait until the public address serves the new build, not the one before it. It also produced an app that went live but could not work: it needed a family passcode, a signing secret and a hosted database that nobody had set. Karigor now makes secrets like the signing key itself, asks the person in plain words for what only they can choose (the passcode) or provide (a free database account), stores the values only where the app runs, and rebuilds the live version with them.
+On 20 October 2026 a real run on a Claude Code login took "a page where my family keeps one shared shopping list" from idea to Vercel: the `linear` process, 12 backlog items built and reviewed, one lint failure caught and fixed, a preview checked behind Vercel's login, then promoted to a public `*.vercel.app` address. It cost nothing extra on the subscription (about USD 6.48 at API prices). The same run exposed real gaps, now fixed: Vercel needed the project created first and a framework declared; a protected preview's redirect to the login page must not count as healthy; and promotion must wait until the public address serves the new build, not the one before it. It also produced an app that went live but could not work: it needed a family passcode, a signing secret and a hosted database that nobody had set. Nirmito now makes secrets like the signing key itself, asks the person in plain words for what only they can choose (the passcode) or provide (a free database account), stores the values only where the app runs, and rebuilds the live version with them.
 
 The Docker image builds and serves the UI; it refuses to listen beyond localhost without a token.
 
-On 22 October 2026 Karigor learned to build systems, not just small apps: the product owner plans the whole product and splits it into stages, `karigor grow` builds each next stage on top of what is live, the architecture names the system's roles and modules and is revised every stage, every web app starts with tested sign-in for many people with roles and permissions, and a release needs browser journeys (each kind of user's main jobs, at phone and desktop size) to pass on a brand-new database. See [the design](docs/superpowers/specs/2026-10-22-karigor-growing-systems-design.md).
+On 22 October 2026 Nirmito learned to build systems, not just small apps: the product owner plans the whole product and splits it into stages, `nirmito grow` builds each next stage on top of what is live, the architecture names the system's roles and modules and is revised every stage, every web app starts with tested sign-in for many people with roles and permissions, and a release needs browser journeys (each kind of user's main jobs, at phone and desktop size) to pass on a brand-new database. See [the design](docs/superpowers/specs/2026-10-22-karigor-growing-systems-design.md).
 
 The packages:
 
@@ -37,16 +37,16 @@ The packages:
 | `@karigor/sandbox` | The project's real workspace: a git repository where every backlog item lands as a commit, and a sandbox that runs the profile's real tests, lint, build, dependency audit and secrets scan. Dropped or parked work is reverted so it never ships. |
 | `@karigor/deploy` | Where releases go. `local` (this computer, no account): each release is built into its own directory, previewed on a spare port, health-checked, then promoted; rollback is a pointer move, and verifying it starts the live release on a spare port. `vercel` (free hobby tier, `VERCEL_TOKEN`): deploy, promote and rollback through the Vercel CLI, and the app's own logs read back so errors become work items. `netlify` (free plan, `NETLIFY_AUTH_TOKEN`; web apps and simple websites): draft deploys built with the site's settings, published by id, rolled back by publishing the one before. `cloudflare` (Pages, `CLOUDFLARE_API_TOKEN`; simple websites): preview branch, then production, with Pages' own rollback. The Netlify and Cloudflare targets are tested against scripted CLI and API answers, not yet on live accounts. |
 | `@karigor/budget` | Prices, the three tiers (free, cheap, best) and the models each one uses, an estimate priced from a real build, a running meter, and the overspend ladder: downgrade the model, then park optional work, then stop. Fix rounds get their own budget slice. |
-| `@karigor/cli` | `karigor new` (from your own idea or a ready-made one in `karigor starters`), `run`, `resume`, `status`, `cost`, `explain`, `park`, `unpark`, plus `feedback`, `correct`, `fix`, `watch` and `serve` for life after release. Plain language throughout. |
+| `@karigor/cli` | `nirmito new` (from your own idea or a ready-made one in `nirmito starters`), `run`, `resume`, `status`, `cost`, `explain`, `park`, `unpark`, plus `feedback`, `correct`, `fix`, `watch` and `serve` for life after release. Plain language throughout. |
 | `@karigor/server` | The chat UI, in English or Bangla: a phone-first page where an idea is the first message, progress arrives as plain sentences, every decision can be corrected, and messages after release become fixes. No framework, no build step. |
 
-**New here?** [Building an app with Karigor](docs/guide.md) walks through it step by step: describing your idea, the build, settings, using the app, asking for changes, and putting it online.
+**New here?** [Building an app with Nirmito](docs/guide.md) walks through it step by step: describing your idea, the build, settings, using the app, asking for changes, and putting it online.
 
 ## Try it in two minutes, free
 
 ```sh
-git clone https://github.com/kishormorol/karigor
-cd karigor
+git clone https://github.com/kishormorol/nirmito
+cd nirmito
 npm install -g pnpm   # if you do not have it
 pnpm install && pnpm build
 node packages/cli/dist/bin.js new "A site where neighbours lend each other tools" --adapter demo --run
@@ -73,9 +73,9 @@ node packages/cli/dist/bin.js new "..." --adapter ollama --run      # a local mo
 node packages/cli/dist/bin.js new "..." --adapter claude --run      # Anthropic API key in ANTHROPIC_API_KEY
 ```
 
-With Ollama, set `KARIGOR_OLLAMA_MODEL` (default `qwen2.5:7b`; small models are fast but weaker, and the gates will park more of their work). Any adapter other than Claude Code builds through `ModelAgent`, which writes whole files and leaves running the tests to the gates.
+With Ollama, set `NIRMITO_OLLAMA_MODEL` (default `qwen2.5:7b`; small models are fast but weaker, and the gates will park more of their work). Any adapter other than Claude Code builds through `ModelAgent`, which writes whole files and leaves running the tests to the gates.
 
-`--tier` picks the models, once per project. **cheap**: Sonnet decides and reviews, Haiku builds, and a piece that fails its checks is retried by Sonnet, so the dearer model is only paid for where it is needed. **best**: Opus decides and reviews, Sonnet builds, and a failed piece is retried by Opus. The checks are the same at both. Without a choice it is cheap on an API key and best on a Claude Code login, where calls cost nothing extra. Karigor names full model ids and passes none of your Claude Code connectors, skills or aliases to its calls.
+`--tier` picks the models, once per project. **cheap**: Sonnet decides and reviews, Haiku builds, and a piece that fails its checks is retried by Sonnet, so the dearer model is only paid for where it is needed. **best**: Opus decides and reviews, Sonnet builds, and a failed piece is retried by Opus. The checks are the same at both. Without a choice it is cheap on an API key and best on a Claude Code login, where calls cost nothing extra. Nirmito names full model ids and passes none of your Claude Code connectors, skills or aliases to its calls.
 
 ### Where it goes live
 
@@ -94,18 +94,18 @@ VERCEL_TOKEN=... node packages/cli/dist/bin.js new "..." --deploy vercel --run
 node packages/cli/dist/bin.js watch <projectId> --every 15     # health, audit, the app's scheduled jobs, fix rounds when needed
 ```
 
-The web-app stores data in SQLite on your computer. On Vercel, give it a free [Turso](https://turso.tech) database by setting `DATABASE_URL` and `DATABASE_AUTH_TOKEN` before deploying; they are passed through by name and never written into the project. Secrets the app needs (a signing key) are made and stored automatically before the preview. Anything only you can choose or provide (a passcode, a database account) is listed by `karigor status`; give it with `karigor setup <id>` (it asks in plain words and hides what you type) or in the chat UI, and the live version is rebuilt with it. Values go only to Vercel's sensitive settings, or a private file on this computer for the local target; Karigor's own records keep names, never values (one exception: the `OWNER_LINK_SECRET` it made itself, kept in a private file so it can ask the app for your sign-in link). Without `VERCEL_TOKEN`, the Vercel CLI's own login (`vercel login`) is used.
+The web-app stores data in SQLite on your computer. On Vercel, give it a free [Turso](https://turso.tech) database by setting `DATABASE_URL` and `DATABASE_AUTH_TOKEN` before deploying; they are passed through by name and never written into the project. Secrets the app needs (a signing key) are made and stored automatically before the preview. Anything only you can choose or provide (a passcode, a database account) is listed by `nirmito status`; give it with `nirmito setup <id>` (it asks in plain words and hides what you type) or in the chat UI, and the live version is rebuilt with it. Values go only to Vercel's sensitive settings, or a private file on this computer for the local target; Nirmito's own records keep names, never values (one exception: the `OWNER_LINK_SECRET` it made itself, kept in a private file so it can ask the app for your sign-in link). Without `VERCEL_TOKEN`, the Vercel CLI's own login (`vercel login`) is used.
 
 ### After release
 
-- `karigor feedback <id> "..."`: say what is wrong or what you want, in your own words.
-- `karigor correct <id> a3 "..."`: change a decision made on your behalf (ids are in `karigor status`).
-- `karigor setup <id>`: give the live app what it still needs (a passcode, a database), in plain words.
-- `karigor fix <id>`: start a fix round now. `serve` and `watch` start them on their own.
-- `karigor grow <id>` (or `--all`): build the next stage of the plan on top of what is live.
-- `karigor admin-link <id> you@example.com "Your name"`: your first way in; open the link it prints to choose a password, then add your team from People. On the chat page, the finished app's card does the same: give your email and press **Get my sign-in link**. It works for apps on Vercel too: Karigor keeps one secret for this (the key the app accepts when Karigor asks it for your link), readable only by your user, and no other value.
+- `nirmito feedback <id> "..."`: say what is wrong or what you want, in your own words.
+- `nirmito correct <id> a3 "..."`: change a decision made on your behalf (ids are in `nirmito status`).
+- `nirmito setup <id>`: give the live app what it still needs (a passcode, a database), in plain words.
+- `nirmito fix <id>`: start a fix round now. `serve` and `watch` start them on their own.
+- `nirmito grow <id>` (or `--all`): build the next stage of the plan on top of what is live.
+- `nirmito admin-link <id> you@example.com "Your name"`: your first way in; open the link it prints to choose a password, then add your team from People. On the chat page, the finished app's card does the same: give your email and press **Get my sign-in link**. It works for apps on Vercel too: Nirmito keeps one secret for this (the key the app accepts when Nirmito asks it for your link), readable only by your user, and no other value.
 
-Projects live in `~/.karigor/projects` (override with `KARIGOR_ROOT`).
+Projects live in `~/.nirmito/projects` (override with `NIRMITO_ROOT`). Nirmito was called Karigor until November 2026: a `~/.karigor/projects` folder is still used when there is one, and settings named `KARIGOR_...` still work.
 
 ## The chat UI and self-hosting
 
@@ -117,24 +117,24 @@ pnpm ui --adapter ollama                  # or claude, or demo
 To reach it from your phone or run it on a server, use Docker:
 
 ```sh
-KARIGOR_TOKEN=$(openssl rand -hex 24) docker compose up -d
+NIRMITO_TOKEN=$(openssl rand -hex 24) docker compose up -d
 docker compose exec ollama ollama pull qwen2.5:7b
-# open http://<host>:4321/?token=<KARIGOR_TOKEN> once; the browser remembers it
+# open http://<host>:4321/?token=<NIRMITO_TOKEN> once; the browser remembers it
 ```
 
-The image defaults to Ollama (free); set `KARIGOR_ADAPTER=claude` and `ANTHROPIC_API_KEY` to use the API instead, or leave the key unset and each person enters their own in the page (it stays in their tab and in the memory of their run, never on disk). The server refuses to listen beyond `127.0.0.1` without `KARIGOR_TOKEN`.
+The image defaults to Ollama (free); set `NIRMITO_ADAPTER=claude` and `ANTHROPIC_API_KEY` to use the API instead, or leave the key unset and each person enters their own in the page (it stays in their tab and in the memory of their run, never on disk). The server refuses to listen beyond `127.0.0.1` without `NIRMITO_TOKEN`.
 
-The `KARIGOR_TOKEN` link sees every project, so keep it for yourself. Give everyone else their own sign-in, which opens only the projects they start: add them from **People** in the page, or run `docker compose exec karigor node packages/server/dist/bin.js add-person "Rahima"` and send them the link it prints. To let anyone who opens the page join with just a name, set `KARIGOR_SIGNUP=open`. Builds run code the AI wrote on your server, so open sign-ups only where you trust who can reach it.
+The `NIRMITO_TOKEN` link sees every project, so keep it for yourself. Give everyone else their own sign-in, which opens only the projects they start: add them from **People** in the page, or run `docker compose exec karigor node packages/server/dist/bin.js add-person "Rahima"` and send them the link it prints. To let anyone who opens the page join with just a name, set `NIRMITO_SIGNUP=open`. Builds run code the AI wrote on your server, so open sign-ups only where you trust who can reach it.
 
 ## Run it as a public platform
 
-To let anyone use Karigor with nothing to install, run [`hosting/setup.sh`](hosting/setup.sh) on a fresh Ubuntu server. An Oracle Cloud "Always Free" Ampere machine (4 cores, 24 GB) is enough, so the whole platform can cost nothing:
+To let anyone use Nirmito with nothing to install, run [`hosting/setup.sh`](hosting/setup.sh) on a fresh Ubuntu server. An Oracle Cloud "Always Free" Ampere machine (4 cores, 24 GB) is enough, so the whole platform can cost nothing:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/kishormorol/karigor/main/hosting/setup.sh | bash
+curl -fsSL https://raw.githubusercontent.com/kishormorol/nirmito/main/hosting/setup.sh | bash
 ```
 
-It installs Docker and starts Karigor, a free open-source model (Ollama) and Caddy for HTTPS. People open the address it prints, sign up with a name and build by chatting. Each app stays running at its own address (`https://a3100.<your-ip>.sslip.io` and so on), and certificates are made only for apps Karigor actually hosts. Without a domain it uses `sslip.io`, which needs no setup. Running the script again updates Karigor and keeps every project. To sign people in by email, give them credit or take payments, add those settings to `/opt/karigor/hosting/.env` (`karigor-server --help` lists them) and run it again.
+It installs Docker and starts Nirmito, a free open-source model (Ollama) and Caddy for HTTPS. People open the address it prints, sign up with a name and build by chatting. Each app stays running at its own address (`https://a3100.<your-ip>.sslip.io` and so on), and certificates are made only for apps Nirmito actually hosts. Without a domain it uses `sslip.io`, which needs no setup. Running the script again updates Nirmito and keeps every project. To sign people in by email, give them credit or take payments, add those settings to `/opt/nirmito/hosting/.env` (`nirmito-server --help` lists them) and run it again.
 
 The free model on a CPU is slow, and weaker than Claude: expect a build to take many hours and more of the work to be set aside. Builds run code the AI wrote on that server, so keep nothing else on it.
 
@@ -157,7 +157,7 @@ idea ──▶ selector picks a process template and a target profile
 
 Reviews are not rubber stamps. A judged verdict fails only on blocking objections (minor suggestions are recorded, not enforced), a re-review sees its previous verdict so it cannot move the goalposts, and a retried role is shown exactly why it failed and what it produced last time. On the first real runs, the reviewer caught a loan that could never end and the skeptic caught a removed neighbour who could rejoin, and both were fixed on the next attempt.
 
-Everything is an event in `events.jsonl` and a Markdown artifact with JSON frontmatter, committed to git inside the project directory. `karigor explain` turns the log into a story.
+Everything is an event in `events.jsonl` and a Markdown artifact with JSON frontmatter, committed to git inside the project directory. `nirmito explain` turns the log into a story.
 
 Design documents live in [`docs/superpowers/specs/`](docs/superpowers/specs/) (kernel, build crew, deploy/operate/UI) with their plans in [`docs/superpowers/plans/`](docs/superpowers/plans/). Writing a process template is explained in [`docs/templates.md`](docs/templates.md).
 
@@ -172,11 +172,11 @@ Design documents live in [`docs/superpowers/specs/`](docs/superpowers/specs/) (k
 
 7. ~~Growing systems: stages, people and roles, browser journeys, a kit for systems~~
 
-The web-app profile also has file uploads, scheduled jobs, email and SMS, and can be added to a phone's home screen. Once it is online, `karigor phone-apps` makes an Android app (a Trusted Web Activity: APK and Play Store bundle, signed with a key Karigor keeps) and an iPhone app (a web view, built for the simulator until there is an Apple account), built by GitHub Actions in a private repository of their own.
+The web-app profile also has file uploads, scheduled jobs, email and SMS, and can be added to a phone's home screen. Once it is online, `nirmito phone-apps` makes an Android app (a Trusted Web Activity: APK and Play Store bundle, signed with a key Nirmito keeps) and an iPhone app (a web view, built for the simulator until there is an Apple account), built by GitHub Actions in a private repository of their own.
 
-Two ways to change a live app: write what you want, or **point at it**. The chat page shows the app in a preview where a click picks a part (named precisely: the Field "Price", 2 of 4, in the Card "New product" on /products), a drag moves a card, row or field, a double-click edits words and a dropped photo replaces a picture. Each gesture becomes one line of a change request that takes a fast lane (`quick-edit`: tests, lint, build, security scan, health and rollback checks, without the slower reviews). The app's own `frame-ancestors` lets only itself and Karigor's page frame it.
+Two ways to change a live app: write what you want, or **point at it**. The chat page shows the app in a preview where a click picks a part (named precisely: the Field "Price", 2 of 4, in the Card "New product" on /products), a drag moves a card, row or field, a double-click edits words and a dropped photo replaces a picture. Each gesture becomes one line of a change request that takes a fast lane (`quick-edit`: tests, lint, build, security scan, health and rollback checks, without the slower reviews). The app's own `frame-ancestors` lets only itself and Nirmito's page frame it.
 
-Karigor can run as a service for many people: sign-in by an emailed one-time link, a credit balance per person, builds on the service's own model key charged at cost plus a set margin (your own key is never charged), and credit bought through Paddle (cards and wallets worldwide) or SSLCommerz (bKash, Nagad, Bangladeshi cards), counted only when the provider itself confirms the payment. `karigor-server --help` lists the settings.
+Nirmito can run as a service for many people: sign-in by an emailed one-time link, a credit balance per person, builds on the service's own model key charged at cost plus a set margin (your own key is never charged), and credit bought through Paddle (cards and wallets worldwide) or SSLCommerz (bKash, Nagad, Bangladeshi cards), counted only when the provider itself confirms the payment. `nirmito-server --help` lists the settings.
 
 A second real run, of the shop-counter starter with stages, roles and browser journeys, is recorded in [`docs/runs/2026-11-09-shop-counter.md`](docs/runs/2026-11-09-shop-counter.md): the skeptic caught a promised backup that might never ship and a browser check that would always fail, before either reached the app.
 
@@ -188,8 +188,8 @@ Next: live runs of the Netlify and Cloudflare targets on real accounts, and a de
 pnpm install
 pnpm test        # unit, golden-path, failure and crash-replay suites, including real git workspaces; all on mocks, zero cost
 pnpm typecheck   # builds every package in dependency order
-KARIGOR_REAL_MODEL=1 pnpm test packages/runtime   # small live calls: Claude Code login, the API if a key is set, Ollama if running
-KARIGOR_REAL_DEPLOY=1 pnpm test packages/deploy    # install, build and serve the real web-app scaffold through the local target
+NIRMITO_REAL_MODEL=1 pnpm test packages/runtime   # small live calls: Claude Code login, the API if a key is set, Ollama if running
+NIRMITO_REAL_DEPLOY=1 pnpm test packages/deploy    # install, build and serve the real web-app scaffold through the local target
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).

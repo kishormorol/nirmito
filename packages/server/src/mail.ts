@@ -1,9 +1,9 @@
-/** Sends the one-time sign-in email. Through Resend when RESEND_API_KEY and KARIGOR_MAIL_FROM are set. */
+/** Sends the one-time sign-in email. Through Resend when RESEND_API_KEY and NIRMITO_MAIL_FROM are set. */
 export type Mailer = (to: string, link: string, lang: "en" | "bn") => Promise<{ ok: boolean; output: string }>;
 
 const WORDS = {
-  en: { subject: "Your Karigor sign-in link", text: (l: string) => `Open this link to sign in to Karigor:\n\n${l}\n\nIt works once, for 15 minutes. If you did not ask for it, ignore this email.` },
-  bn: { subject: "আপনার Karigor সাইন ইন লিংক", text: (l: string) => `Karigor-এ সাইন ইন করতে এই লিংকটি খুলুন:\n\n${l}\n\nএটি একবার, ১৫ মিনিটের জন্য কাজ করে। আপনি না চেয়ে থাকলে এই ইমেইলটি এড়িয়ে যান।` },
+  en: { subject: "Your Nirmito sign-in link", text: (l: string) => `Open this link to sign in to Nirmito:\n\n${l}\n\nIt works once, for 15 minutes. If you did not ask for it, ignore this email.` },
+  bn: { subject: "আপনার Nirmito সাইন ইন লিংক", text: (l: string) => `Nirmito-এ সাইন ইন করতে এই লিংকটি খুলুন:\n\n${l}\n\nএটি একবার, ১৫ মিনিটের জন্য কাজ করে। আপনি না চেয়ে থাকলে এই ইমেইলটি এড়িয়ে যান।` },
 };
 
 export function resendMailer(o: { apiKey: string; from: string; fetchImpl?: typeof fetch }): Mailer {
@@ -23,7 +23,7 @@ export function resendMailer(o: { apiKey: string; from: string; fetchImpl?: type
   };
 }
 
-/** Without an email service (a Karigor for a few people): the link goes to the server's log for whoever runs it to pass on. */
+/** Without an email service (a Nirmito for a few people): the link goes to the server's log for whoever runs it to pass on. */
 export function logMailer(log: (line: string) => void): Mailer {
   return async (to, link) => {
     log(`sign-in link for ${to} (no email service set up, so pass it on yourself): ${link}`);

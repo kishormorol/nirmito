@@ -3,15 +3,15 @@
 import { useEffect } from "react";
 
 /**
- * Karigor's edit mode. Inside Karigor's preview (and only when that page switches it on)
+ * Nirmito's edit mode. Inside Nirmito's preview (and only when that page switches it on)
  * the person points at a part of a page, drags it among its neighbours, edits its words or drops a
- * photo on it. Nothing changes in the app from here: each gesture is sent to Karigor as a precise
+ * photo on it. Nothing changes in the app from here: each gesture is sent to Nirmito as a precise
  * change request, which is built, tested and released like any other change.
- * Outside a frame this does nothing. Only Karigor's preview (KARIGOR_EDITOR_ORIGIN) or the app itself may
+ * Outside a frame this does nothing. Only Nirmito's preview (KARIGOR_EDITOR_ORIGIN) or the app itself may
  * frame the app (middleware.ts), so the page around it is trusted, and answers go to that page alone.
  * Keep it in app/layout.tsx.
  */
-export function KarigorEdit() {
+export function NirmitoEdit() {
   useEffect(() => {
     if (window.parent === window) return;
     let on = false;
@@ -25,7 +25,7 @@ export function KarigorEdit() {
     const send = (msg: Record<string, unknown>) => editor && window.parent.postMessage({ ...msg, page: location.pathname }, editor);
     const BLOCK = "[data-k],h1,h2,h3,p,li,button,a,img,label,th,td,input,select,textarea,nav";
     const target = (e: Event) => ((e.target as Element | null)?.closest?.(BLOCK) as HTMLElement | null) ?? null;
-    /** What a part is, in words Karigor and its developer can find it by. */
+    /** What a part is, in words Nirmito and its developer can find it by. */
     // A button, link, picture, input, list item or table cell is a part of its own; other text (a label,
     // a heading, a paragraph) belongs to the marked block around it (a Field, a Card).
     const OWN = new Set(["button", "a", "img", "input", "select", "textarea", "li", "td", "th", "nav"]);

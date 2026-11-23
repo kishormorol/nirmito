@@ -11,7 +11,7 @@ export interface LocalDeployOptions {
   /** The project directory; releases live in `<projectDir>/releases`. */
   projectDir: string;
   profile: Profile;
-  /** Port `karigor serve` uses for production. */
+  /** Port `nirmito serve` uses for production. */
   productionPort?: number;
   /** Skip the profile's install step (tests with the fixture). */
   skipInstall?: boolean;
@@ -32,7 +32,7 @@ const READY = ".karigor-release.json";
 /**
  * The zero-dollar target: releases are built into `<project>/releases/<version>` and served from
  * this machine. A preview runs on a free port; production is whatever `current.json` points at,
- * served by `karigor serve`.
+ * served by `nirmito serve`.
  */
 export class LocalDeploy implements DeployAdapter {
   readonly name = "local";
@@ -50,7 +50,7 @@ export class LocalDeploy implements DeployAdapter {
   }
 
   describe(): string {
-    return `this computer: run "karigor serve" and open ${this.productionUrl}`;
+    return `this computer: run "nirmito serve" and open ${this.productionUrl}`;
   }
 
   /** Called after production changes (promotion or rollback), so a running `serve` can switch. */
@@ -228,7 +228,7 @@ export class LocalDeploy implements DeployAdapter {
   async applySettings(r: { dir: string; live: { url: string; id: string; version: string } }): Promise<DeployResult> {
     const cur = await this.current();
     if (cur) await this.setCurrent(cur);
-    return { ok: true, url: r.live.url, id: r.live.id, output: "the live release restarts with the new settings when karigor serve is running" };
+    return { ok: true, url: r.live.url, id: r.live.id, output: "the live release restarts with the new settings when nirmito serve is running" };
   }
 
   /** Delete old releases, keeping the live one, its predecessors in history, and the newest few. */

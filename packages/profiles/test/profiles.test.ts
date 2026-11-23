@@ -55,7 +55,7 @@ describe("profiles", () => {
     }
     const pkg = JSON.parse(await readFile(join(dir, "package.json"), "utf8"));
     expect(pkg.scripts.test).toMatch(/vitest run --reporter=json/);
-    // Karigor gives the owner their first key with the same script name and secret it already knows
+    // Nirmito gives the owner their first key with the same script name and secret it already knows
     expect(pkg.scripts["key:new"]).toBeTruthy();
     expect(await readFile(join(dir, ".env.example"), "utf8")).toMatch(/# karigor: generate\nOWNER_LINK_SECRET=/);
     for (const m of ["need(c,", "ENDPOINTS", "testApi()", "c.var.db", "Fake secrets in tests look plainly fake"]) expect(api.stackGuide).toContain(m);
@@ -74,8 +74,8 @@ describe("profiles", () => {
     const pkg = JSON.parse(await readFile(join(dir, "package.json"), "utf8"));
     expect(pkg.scripts.test).toMatch(/vitest run --reporter=json/);
     expect(webApp.stackGuide).toMatch(/src\/db\/schema.ts/);
-    // Karigor's edit mode: the helper is in the layout, framing is limited, and the blocks name themselves
-    expect(await readFile(join(dir, "app/layout.tsx"), "utf8")).toContain("<KarigorEdit />");
+    // Nirmito's edit mode: the helper is in the layout, framing is limited, and the blocks name themselves
+    expect(await readFile(join(dir, "app/layout.tsx"), "utf8")).toContain("<NirmitoEdit />");
     expect(await readFile(join(dir, "middleware.ts"), "utf8")).toMatch(/frame-ancestors 'self'/);
     for (const k of ["Card", "ListRow", "Field", "Stat", "PageHeader", "EmptyState"]) expect(await readFile(join(dir, "src/components/ui.tsx"), "utf8")).toContain(`data-k="${k}"`);
     // what the guide tells the developer to use is really there, and the scheduler can reach it
@@ -152,7 +152,7 @@ describe("settings from .env.example", () => {
 });
 
 describe("the package manager", () => {
-  it("is the same version in every app as in Karigor: newer pnpm refuses installs and ignores the security overrides", async () => {
+  it("is the same version in every app as in Nirmito: newer pnpm refuses installs and ignores the security overrides", async () => {
     const pinned = (dir: string) => readFile(dir, "utf8").then((t) => (JSON.parse(t) as { packageManager?: string }).packageManager);
     const karigor = await pinned(new URL("../../../package.json", import.meta.url).pathname.replace(/^\/(?=[A-Za-z]:)/, ""));
     for (const p of [webApp, staticSite, api]) {

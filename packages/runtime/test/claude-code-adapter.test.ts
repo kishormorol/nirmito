@@ -84,8 +84,8 @@ describe("ClaudeCodeAdapter (offline, scripted CLI)", () => {
   });
 });
 
-/** Uses your Claude Code login. Run with KARIGOR_REAL_MODEL=1. One small Haiku call. */
-describe.runIf(process.env["KARIGOR_REAL_MODEL"] === "1")("ClaudeCodeAdapter (live)", () => {
+/** Uses your Claude Code login. Run with NIRMITO_REAL_MODEL=1. One small Haiku call. */
+describe.runIf(process.env["NIRMITO_REAL_MODEL"] === "1")("ClaudeCodeAdapter (live)", () => {
   it("returns schema-valid structured output through the claude CLI", async () => {
     const a = new ClaudeCodeAdapter();
     const r = await a.complete({

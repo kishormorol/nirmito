@@ -42,13 +42,13 @@ export interface ServerOptions {
   /** Builds running at once. */
   maxRuns?: number;
   /**
-   * Sign-in by email: a one-time link is sent to the address (`url` is this Karigor's public address).
+   * Sign-in by email: a one-time link is sent to the address (`url` is this Nirmito's public address).
    * With sign-ups open, a new address becomes a new person with `welcomeCreditUsd`.
    */
   emailSignIn?: { url: string; mailer: Mailer };
   welcomeCreditUsd?: number;
   /**
-   * Charge people for builds that use this Karigor's own model key: what each build spent, plus
+   * Charge people for builds that use this Nirmito's own model key: what each build spent, plus
    * `marginPct`, comes off its owner's credit, and a build needs credit to start. A person's own key is never charged.
    */
   metered?: { marginPct: number };
@@ -63,7 +63,7 @@ export interface ServerOptions {
   log?: (line: string) => void;
 }
 
-export interface KarigorServer {
+export interface NirmitoServer {
   server: Server;
   /** Projects with a build or fix round in progress. */
   runs: Map<string, Promise<void>>;
@@ -75,7 +75,7 @@ export interface KarigorServer {
 
 const ID = /^[a-z0-9][a-z0-9-]{0,80}$/;
 
-/** Who is asking: whoever runs this Karigor sees everything; everyone else only their own projects. */
+/** Who is asking: whoever runs this Nirmito sees everything; everyone else only their own projects. */
 type Viewer = { admin: true } | { admin: false; person: Person };
 const MAX_BODY = 64 * 1024;
 
@@ -196,7 +196,7 @@ function send(res: ServerResponse, status: number, data: unknown): void {
 }
 
 /** The chat UI and its API over the kernel. Bring-your-own keys live only in the memory of the run they were sent with. */
-export function createKarigorServer(o: ServerOptions): KarigorServer {
+export function createNirmitoServer(o: ServerOptions): NirmitoServer {
   const runs = new Map<string, Promise<void>>();
   const log = o.log ?? (() => {});
   const people = new People(o.root);
@@ -222,7 +222,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
     if (runs.has(id)) return false;
     clearTimeout(retries.get(id));
     retries.delete(id);
-    if (runs.size >= (o.maxRuns ?? 2)) throw new HttpError(429, "Karigor is busy with other projects; try again in a few minutes");
+    if (runs.size >= (o.maxRuns ?? 2)) throw new HttpError(429, "Nirmito is busy with other projects; try again in a few minutes");
     problems.delete(id);
     // What the project had spent before, so its owner is charged for this run alone.
     const before = o.metered && !apiKey ? spentOn(id) : undefined;
@@ -255,7 +255,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
     if (!state.ledgerId) return 0;
     return meter((await store.readArtifact("cost-ledger", state.ledgerId)).meta).total;
   };
-  /** The run's spending, with the margin, comes off its owner's credit. Projects of whoever runs this Karigor are not charged. */
+  /** The run's spending, with the margin, comes off its owner's credit. Projects of whoever runs this Nirmito are not charged. */
   const chargeFor = async (id: string, before: number): Promise<void> => {
     const used = (await spentOn(id)) - before;
     const owner = await people.ownerOf(id);
@@ -265,7 +265,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
     log(`[${id}] charged ${owner.name} USD ${usd.toFixed(4)}`);
   };
   /** Whether a build may start for this viewer: always with their own key or unmetered; otherwise they need credit left. */
-  // A key counts as theirs only where it is used: the others ignore it and spend this Karigor's own allowance (demo spends nothing).
+  // A key counts as theirs only where it is used: the others ignore it and spend this Nirmito's own allowance (demo spends nothing).
   const ownKey = (b: Record<string, unknown>) => (o.adapter === "claude" || o.adapter === "demo" ? optionalKey(b) : undefined);
   const mayBuild = (v: Viewer, apiKey: string | undefined): boolean => !o.metered || !!apiKey || v.admin || balanceOf(v.person) > 0;
   const needCredit = (v: Viewer, apiKey: string | undefined): void => {
@@ -300,7 +300,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
   // Projects paused before this server started carry on too.
   void listProjects(o.root).then((ps) => Promise.all(ps.filter((p) => p.status === "waiting").map((p) => retryIfPaused(p.id)))).catch(() => {});
 
-  /** Another process (karigor serve, a CLI run or resume) is working on it. */
+  /** Another process (nirmito serve, a CLI run or resume) is working on it. */
   const busyElsewhere = async (id: string) => !runs.has(id) && (await runningPid(join(o.root, id))) !== undefined;
   const isRunning = async (id: string) => runs.has(id) || (await busyElsewhere(id));
 
@@ -313,7 +313,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
     return problem ? { ...v, problem } : v;
   };
 
-  /** The token's owner: the one who runs it (KARIGOR_TOKEN, or anyone when there is none) or a person with their own link. */
+  /** The token's owner: the one who runs it (NIRMITO_TOKEN, or anyone when there is none) or a person with their own link. */
   const viewerFor = async (token: string | undefined | null): Promise<Viewer | undefined> => {
     if (!o.token) return { admin: true };
     if (!token) return undefined;
@@ -397,7 +397,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       const b = await body(req);
       const email = text(b, "email", 200);
       const lang = isLang(b["lang"]) ? b["lang"] : "en";
-      // Nobody's inbox is flooded and no one fills this Karigor with accounts. A known address past its limit gets
+      // Nobody's inbox is flooded and no one fills this Nirmito with accounts. A known address past its limit gets
       // the same answer as always, since the emails already sent still work.
       if (!asks.allow(`from ${callerOf(req)}`, 20, 60 * 60_000)) throw new HttpError(429, "too many sign-in emails were asked for; try again in an hour");
       if (!asks.allow(`to ${email.toLowerCase()}`, 5, 15 * 60_000)) return send(res, 200, { sent: true });
@@ -416,9 +416,9 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       return send(res, 200, { sent: true });
     }
     if (method === "POST" && path === "/api/signup") {
-      if (!o.signup || !o.token) throw new HttpError(403, "this Karigor does not take sign-ups; ask whoever runs it for a link");
+      if (!o.signup || !o.token) throw new HttpError(403, "this Nirmito does not take sign-ups; ask whoever runs it for a link");
       const name = text(await body(req), "name", 80);
-      if ((await people.all()).length >= (o.maxPeople ?? 200)) throw new HttpError(403, "this Karigor is full; ask whoever runs it for a link");
+      if ((await people.all()).length >= (o.maxPeople ?? 200)) throw new HttpError(403, "this Nirmito is full; ask whoever runs it for a link");
       const { person, token } = await people.add(name);
       log(`${person.name} signed up`);
       res.writeHead(201, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "set-cookie": signInCookie(token), ...SECURITY_HEADERS });
@@ -427,7 +427,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
     }
     const viewer = await whoIs(req);
     if (!viewer) {
-      const error = o.signup ? "sign up to start" : "this Karigor needs an access link; ask whoever runs it";
+      const error = o.signup ? "sign up to start" : "this Nirmito needs an access link; ask whoever runs it";
       return send(res, 401, { error: errorIn(langOf(req), error), signup: !!o.signup, ...(o.emailSignIn ? { email: true } : {}) });
     }
 
@@ -437,7 +437,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
     }
     if (path === "/api/billing/checkout" && method === "POST") {
       if (!o.billing) throw new HttpError(404, "not found");
-      if (viewer.admin) throw new HttpError(400, "whoever runs this Karigor does not need credit");
+      if (viewer.admin) throw new HttpError(400, "whoever runs this Nirmito does not need credit");
       const b = await body(req);
       const usd = Number(b["usd"]);
       if (!o.billing.packs.includes(usd)) throw new HttpError(400, "choose one of the amounts shown");
@@ -452,12 +452,12 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       }
     }
     if (path === "/api/people" || path.startsWith("/api/people/")) {
-      if (!viewer.admin) throw new HttpError(403, "only whoever runs this Karigor can add people");
+      if (!viewer.admin) throw new HttpError(403, "only whoever runs this Nirmito can add people");
       if (method === "GET" && path === "/api/people") {
         return send(res, 200, { people: (await people.all()).map((p) => ({ id: p.id, name: p.name, projects: p.projects.length, createdAt: p.createdAt })) });
       }
       if (method === "POST" && path === "/api/people") {
-        if (!o.token) throw new HttpError(400, "people need their own links only when this Karigor has an access link (KARIGOR_TOKEN)");
+        if (!o.token) throw new HttpError(400, "people need their own links only when this Nirmito has an access link (NIRMITO_TOKEN)");
         const { person, token } = await people.add(text(await body(req), "name", 80));
         return send(res, 201, { id: person.id, name: person.name, token });
       }
@@ -478,7 +478,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       // Their own idea, or a ready-made one with their changes in `idea`.
       const starter = typeof b["starter"] === "string" ? b["starter"] : undefined;
       const idea = starter === undefined ? text(b, "idea") : ideaForStarter(starter, typeof b["idea"] === "string" ? b["idea"] : undefined, isLang(b["lang"]) ? b["lang"] : "en");
-      if (o.adapter === "claude" && !process.env["ANTHROPIC_API_KEY"] && !ownKey(b)) throw new HttpError(400, "this Karigor uses your own Anthropic key; add it first");
+      if (o.adapter === "claude" && !process.env["ANTHROPIC_API_KEY"] && !ownKey(b)) throw new HttpError(400, "this Nirmito uses your own Anthropic key; add it first");
       needCredit(viewer, ownKey(b));
       const id = await createProject(o.root, idea);
       if (!viewer.admin) await people.own(viewer.person.id, id);
@@ -562,7 +562,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
         throw new HttpError(404, "no such project");
       });
       if (runs.has(id) || (await runningPid(store.dir))) {
-        // A build is working on it (here, or in karigor serve or a CLI run): the message waits in the inbox.
+        // A build is working on it (here, or in nirmito serve or a CLI run): the message waits in the inbox.
         await queueInbox(store.dir, { kind: b["edit"] === true ? "edit" : "feedback", text: said });
         return send(res, 202, { workItemId: null, fixing: false, queued: true });
       }
@@ -594,7 +594,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
         throw new HttpError(404, "no such project");
       });
       const opts = await runOptions(o.root, id, await flagsFor(id), { log: (l) => log(`[${id}] ${l}`) });
-      if (!opts.deploy) throw new HttpError(400, "this Karigor does not put apps online, so there is nowhere to store settings");
+      if (!opts.deploy) throw new HttpError(400, "this Nirmito does not put apps online, so there is nowhere to store settings");
       // Applying settings rebuilds the live app; it is tracked like a run so nothing else starts meanwhile.
       let result: Awaited<ReturnType<typeof provideSettings>> | undefined;
       const p = provideSettings({ store, deploy: opts.deploy, values, log: (l) => log(`[${id}] ${l}`) })
@@ -631,7 +631,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       await people.disown(id);
       await rm(join(o.root, id), { recursive: true, force: true });
       log(`[${id}] deleted`);
-      // An app put online elsewhere (Vercel, Netlify, Cloudflare) is not Karigor's to remove; the person is told where it still is.
+      // An app put online elsewhere (Vercel, Netlify, Cloudflare) is not Nirmito's to remove; the person is told where it still is.
       const stillOnline = o.deploy && o.deploy !== "local" ? v.live?.url : undefined;
       return send(res, 200, { deleted: true, ...(stillOnline ? { stillOnline } : {}) });
     }
@@ -650,7 +650,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       const link = /https?:\/\/\S+\/welcome\/\S+/.exec(r.output)?.[0];
       if (!r.ok || !link) {
         log(`[${id}] sign-in link failed: ${r.output}`);
-        throw new HttpError(400, "the sign-in link could not be made here; ask whoever runs this Karigor");
+        throw new HttpError(400, "the sign-in link could not be made here; ask whoever runs this Nirmito");
       }
       return send(res, 200, await publicUrls({ link }));
     }
@@ -680,7 +680,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       const r = await ownerAccessKey(opts.deploy, name, { projectDir: join(o.root, id), ...(live?.url ? { url: live.url } : {}) });
       if (!r.ok || !r.key) {
         log(`[${id}] access key failed: ${r.output}`);
-        throw new HttpError(400, "the access key could not be made here; ask whoever runs this Karigor");
+        throw new HttpError(400, "the access key could not be made here; ask whoever runs this Nirmito");
       }
       log(`[${id}] made an access key for ${name || "Owner"}`);
       return send(res, 200, { key: r.key });

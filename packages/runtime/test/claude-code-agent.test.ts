@@ -60,8 +60,8 @@ describe("ClaudeCodeAgent (offline)", () => {
   });
 });
 
-/** Uses your Claude Code login and edits a scratch workspace. Run with KARIGOR_REAL_MODEL=1. */
-describe.runIf(process.env["KARIGOR_REAL_MODEL"] === "1")("ClaudeCodeAgent (live)", () => {
+/** Uses your Claude Code login and edits a scratch workspace. Run with NIRMITO_REAL_MODEL=1. */
+describe.runIf(process.env["NIRMITO_REAL_MODEL"] === "1")("ClaudeCodeAgent (live)", () => {
   it("creates a file in the workspace when asked", async () => {
     const ws = await Workspace.create(join(await mkdtemp(join(tmpdir(), "karigor-agent-live-")), "ws"), fixture);
     const a = new ClaudeCodeAgent({ routineModel: "claude-haiku-5-5", effort: { judgment: "low", routine: "low" } });

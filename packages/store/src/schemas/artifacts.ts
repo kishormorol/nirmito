@@ -42,7 +42,7 @@ export const SpecMeta = meta("spec", {
   features: z.array(FeatureSchema).min(1),
   successCriteria: z.array(z.string().min(1)).min(1),
   /**
-   * The product in the order it is built. Stage 1 is the first release; `karigor grow` builds the rest.
+   * The product in the order it is built. Stage 1 is the first release; `nirmito grow` builds the rest.
    * Specs written before stages existed have none, which reads as one stage holding every feature.
    */
   stages: z.array(StageSchema).default([]),

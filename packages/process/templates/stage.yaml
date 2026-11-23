@@ -2,7 +2,7 @@ name: stage
 description: Builds the next stage of a released product on top of what is live.
 fitsWhen: |
   The project is already released and the person asked for the next stage of its spec
-  (karigor grow). Never chosen for a new idea.
+  (nirmito grow). Never chosen for a new idea.
 initialPhase: design
 limits:
   projectFailures: 25

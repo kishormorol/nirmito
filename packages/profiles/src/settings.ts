@@ -4,7 +4,7 @@ import { join } from "node:path";
 
 /**
  * How a setting gets its value, without a technical question:
- * - `generate`: a secret nobody needs to know (a signing key); Karigor makes one.
+ * - `generate`: a secret nobody needs to know (a signing key); Nirmito makes one.
  * - `ask`: a product choice only the person can make (the family passcode); asked in plain words.
  * - `service`: a connection to an outside service that needs its own account (a hosted database).
  */

@@ -33,7 +33,7 @@ export const phoneExec: PhoneExec = (cmd, args, o) =>
     child.stdin.end(o.input ?? "");
   });
 
-/** What Karigor remembers about a project's phone apps, in `phone-apps.json` (no secrets). */
+/** What Nirmito remembers about a project's phone apps, in `phone-apps.json` (no secrets). */
 export interface PhoneState {
   status: "building" | "ready" | "failed";
   /** owner/name on GitHub. */
@@ -92,8 +92,8 @@ export async function signingKey(projectDir: string, name: string, exec: PhoneEx
     const password = (await import("node:crypto")).randomBytes(24).toString("base64url");
     const key = join(dir, "upload.key");
     const cert = join(dir, "upload.crt");
-    const cn = name.replace(/[^\p{L}\p{N} .-]/gu, "").slice(0, 60) || "Karigor app";
-    const gen = await exec("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", key, "-out", cert, "-days", "10950", "-subj", `/CN=${cn}/O=Karigor`], { cwd: dir });
+    const cn = name.replace(/[^\p{L}\p{N} .-]/gu, "").slice(0, 60) || "Nirmito app";
+    const gen = await exec("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", key, "-out", cert, "-days", "10950", "-subj", `/CN=${cn}/O=Nirmito`], { cwd: dir });
     if (gen.code !== 0) throw new Error(`could not make the signing key (is OpenSSL installed?): ${gen.stderr.trim().split("\n").at(-1)}`);
     // Java reads PKCS#12 made with these (older, widely supported) algorithms on every version.
     const p12 = await exec("openssl", ["pkcs12", "-export", "-inkey", key, "-in", cert, "-name", "upload", "-out", file, "-passout", "stdin", "-keypbe", "PBE-SHA1-3DES", "-certpbe", "PBE-SHA1-3DES", "-macalg", "sha1"], { cwd: dir, input: `${password}\n` });
@@ -218,7 +218,7 @@ export async function makePhoneApps(o: MakePhoneAppsOptions): Promise<PhoneState
     const repo = state.repo ?? `${owner}/${o.slug}-phone`.slice(0, 100);
     if ((await gh(["repo", "view", repo, "--json", "name"], dir)).code !== 0) {
       log(`phone apps: making the private repository ${repo} on GitHub`);
-      const made = await gh(["repo", "create", repo, "--private", "--description", `Phone apps for ${url.host}, made by Karigor`], dir);
+      const made = await gh(["repo", "create", repo, "--private", "--description", `Phone apps for ${url.host}, made by Nirmito`], dir);
       if (made.code !== 0) throw new Error(`could not make the GitHub repository ${repo}: ${made.stderr.trim().split("\n").at(-1)}`);
     }
     state.repo = repo;

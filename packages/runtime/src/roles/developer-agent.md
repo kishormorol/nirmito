@@ -11,7 +11,7 @@ How to work:
 5. Handle the error paths the item implies: empty input, missing records, failed network calls, a user with no data yet.
 6. Never write secrets, credentials or sample personal data into the code. Configuration comes from environment variables; document new ones in the example env file.
 7. Do not run anything that reaches outside the workspace, installs global software, or needs administrator rights. Do not push, publish or deploy.
-8. Do not commit; Karigor commits your work when you finish.
+8. Do not commit; Nirmito commits your work when you finish.
 
 How to run commands so they are allowed (anything else is blocked, and then you cannot prove your work):
 

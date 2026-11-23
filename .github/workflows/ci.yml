@@ -25,7 +25,7 @@ jobs:
       - run: docker build -t karigor .
       - name: starts with empty settings
         run: |
-          docker run -d --name karigor-check -e KARIGOR_TOKEN=check -e KARIGOR_URL= -e KARIGOR_METERED= -p 4321:4321 karigor
+          docker run -d --name karigor-check -e NIRMITO_TOKEN=check -e NIRMITO_URL= -e NIRMITO_METERED= -p 4321:4321 karigor
           for i in $(seq 20); do curl -fsS localhost:4321/healthz && exit 0; sleep 1; done
           docker logs karigor-check; exit 1
       - name: browser journeys run in it

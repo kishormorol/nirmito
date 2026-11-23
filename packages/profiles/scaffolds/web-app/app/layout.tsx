@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { APP_NAME, APP_TAGLINE } from "@/lib/app";
-import { KarigorEdit } from "@/components/karigor-edit";
+import { NirmitoEdit } from "@/components/karigor-edit";
 
 export const metadata: Metadata = { title: APP_NAME, description: APP_TAGLINE };
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#0e5e55" };
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </head>
       <body className="min-h-screen bg-ground font-sans text-ink antialiased">
         {children}
-        <KarigorEdit />
+        <NirmitoEdit />
       </body>
     </html>
   );

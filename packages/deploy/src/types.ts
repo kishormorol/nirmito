@@ -54,7 +54,7 @@ export interface DeployAdapter {
   applySettings?(r: { dir: string; live: LiveRelease }): Promise<DeployResult>;
   /**
    * Problems the live app's own logs show since `since`, one line each (failed requests and logged
-   * errors), oldest first. For hosted targets, where Karigor cannot read the app's output directly.
+   * errors), oldest first. For hosted targets, where Nirmito cannot read the app's output directly.
    */
   recentErrors?(since: Date): Promise<string[]>;
   /** What a running preview printed, when the target can tell. */

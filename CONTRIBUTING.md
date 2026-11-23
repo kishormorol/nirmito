@@ -1,6 +1,6 @@
-# Contributing to Karigor
+# Contributing to Nirmito
 
-Thank you. Karigor is meant to benefit people everywhere, so contributions that make it cheaper, more reliable, or usable in more languages and places are the most welcome of all.
+Thank you. Nirmito is meant to benefit people everywhere, so contributions that make it cheaper, more reliable, or usable in more languages and places are the most welcome of all.
 
 ## Principles every change must respect
 

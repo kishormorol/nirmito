@@ -4,7 +4,7 @@ import { assetLinks } from "@/lib/app-links";
 const FP = Array.from({ length: 32 }, (_, i) => (i + 16).toString(16).toUpperCase().padStart(2, "0")).join(":");
 
 describe("Android app links", () => {
-  it("are empty until Karigor makes the phone apps", () => {
+  it("are empty until Nirmito makes the phone apps", () => {
     expect(assetLinks(undefined)).toEqual([]);
     expect(assetLinks("not a setting")).toEqual([]);
     expect(assetLinks("app.karigor.shop:not-a-fingerprint")).toEqual([]);
