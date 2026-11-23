@@ -136,3 +136,26 @@ describe("LocalSandbox", () => {
     expect(await scanSecrets(dir, ["pnpm-lock.yaml", ".env.example", "ok.ts"])).toEqual([]);
   });
 });
+
+it("an app made before pnpm was pinned gets the pin, unless its package.json is being changed", async () => {
+  const dir = join(await mkdtemp(join(tmpdir(), "karigor-pin-")), "w");
+  const ws = await Workspace.create(dir, fixture, { skipInstall: true });
+  const file = join(dir, "package.json");
+  await writeFile(file, JSON.stringify(JSON.parse(await readFile(file, "utf8")), null, 2));
+  await ws.commitAll("laid out as real apps are");
+  const before = await ws.head();
+  await Workspace.open(dir);
+  expect(await ws.head()).toBe(before); // no pnpm lockfile: not a pnpm app
+  await writeFile(join(dir, "pnpm-lock.yaml"), "lockfileVersion: '9.0'\n");
+  await ws.commitAll("lockfile");
+  const clean = await readFile(file, "utf8");
+  await writeFile(file, clean.replace("{", "{ "));
+  await Workspace.open(dir);
+  expect(await readFile(file, "utf8")).not.toContain("packageManager");
+  await writeFile(file, clean);
+  await Workspace.open(dir);
+  expect(JSON.parse(await readFile(file, "utf8")).packageManager).toBe("pnpm@10.34.7");
+  const pinned = await ws.head();
+  await Workspace.open(dir);
+  expect(await ws.head()).toBe(pinned);
+});

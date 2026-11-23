@@ -14,6 +14,11 @@ export class QuotaError extends Error {
   }
 }
 
+/** The credit of whoever pays for the build does not cover its next call. Pauses the project like a used-up allowance. */
+export class CreditError extends QuotaError {
+  override name = "CreditError";
+}
+
 const QUOTA = /\b(weekly|daily|monthly|usage|plan|session)\s+limit\b|\bhit your( [a-z]+)? limit\b|\blimit (reached|exceeded)\b|\bquota\b|\bcredit balance\b|\bout of credits?\b|\bbilling\b/i;
 
 /** A QuotaError when `text` is a provider's "allowance used up" message, else undefined. */

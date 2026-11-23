@@ -5,7 +5,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { meter } from "@karigor/budget";
 import { FsStore, GivenError, GIVEN_LIMITS, addGiven, queueInbox, runningPid } from "@karigor/store";
-import { adminLink, ownerAccessKey, phoneBuildFile, projectPhoneApps, canStartMaintenance, correctAssumption, editSignal, createProject, feedbackSignal, growOnce, ideaFor, isLang, type Lang, operateOnce, pausedForAllowance, provideSettings, recordSignals, runOptions, runProject, STARTERS, STARTERS_BN } from "@karigor/cli";
+import { adminLink, ownerAccessKey, phoneBuildFile, projectPhoneApps, canStartMaintenance, correctAssumption, editSignal, createProject, feedbackSignal, growOnce, ideaFor, isLang, type Lang, operateOnce, pausedForAllowance, pausedForCredit, provideSettings, recordSignals, runOptions, runProject, STARTERS, STARTERS_BN } from "@karigor/cli";
 import { listProjects, projectView } from "./view.js";
 import { errorIn } from "./errors.js";
 import type { Mailer } from "./mail.js";
@@ -226,8 +226,11 @@ export function createNirmitoServer(o: ServerOptions): NirmitoServer {
     problems.delete(id);
     // What the project had spent before, so its owner is charged for this run alone.
     const before = o.metered && !apiKey ? spentOn(id) : undefined;
+    let purse: Purse | undefined;
     const p = (async () => {
-      const opts = await runOptions(o.root, id, await flagsFor(id), { ...(apiKey ? { apiKey } : {}), log: (l) => log(`[${id}] ${l}`) });
+      purse = before ? await openPurse(id) : undefined;
+      const credit = purse && { left: () => purse!.left, used: (usd: number) => void (purse!.left -= usd) };
+      const opts = { ...(await runOptions(o.root, id, await flagsFor(id), { ...(apiKey ? { apiKey } : {}), log: (l) => log(`[${id}] ${l}`) })), ...(credit ? { credit } : {}) };
       if (kind === "fix") await operateOnce(opts);
       else if (kind === "grow") {
         const r = await growOnce(opts);
@@ -241,11 +244,43 @@ export function createNirmitoServer(o: ServerOptions): NirmitoServer {
       })
       .finally(async () => {
         if (before) await chargeFor(id, await before).catch((e: Error) => log(`[${id}] could not count what this run used: ${e.message}`));
+        if (purse && --purse.runs === 0) purses.delete(purse.owner);
         runs.delete(id);
         void retryIfPaused(id);
       });
     runs.set(id, p);
     return true;
+  };
+
+  /** What each person's running builds may still spend together, in model cost (the margin is taken off first). */
+  interface Purse {
+    owner: string;
+    left: number;
+    runs: number;
+  }
+  const purses = new Map<string, Purse>();
+  const openPurse = async (id: string): Promise<Purse | undefined> => {
+    const owner = await people.ownerOf(id);
+    if (!owner) return undefined; // projects of whoever runs this are not charged
+    let purse = purses.get(owner.id);
+    if (!purse) purses.set(owner.id, (purse = { owner: owner.id, left: balanceOf(owner) / (1 + (o.metered?.marginPct ?? 0) / 100), runs: 0 }));
+    purse.runs++;
+    return purse;
+  };
+  /** Credit was added: builds that paused for it carry on. */
+  const creditAdded = async (personId: string, usd: number): Promise<void> => {
+    const purse = purses.get(personId);
+    if (purse) purse.left += usd / (1 + (o.metered?.marginPct ?? 0) / 100);
+    for (const id of (await people.byId(personId))?.projects ?? []) {
+      const state = await FsStore.open(o.root, id).then((st) => st.replay()).catch(() => undefined);
+      if (!state || !pausedForCredit(state) || runs.has(id) || (await busyElsewhere(id))) continue;
+      try {
+        startRun(id, "run");
+      } catch {
+        log(`[${id}] has credit again but the server is busy; trying later`);
+        void retryIfPaused(id, true);
+      }
+    }
   };
 
   /** What a project's builds have spent with the model, in USD. */
@@ -273,24 +308,24 @@ export function createNirmitoServer(o: ServerOptions): NirmitoServer {
   };
 
   /** A project paused for the usage allowance tries again on its own, on a fixed interval; the page shows it paused meanwhile. */
-  const retryIfPaused = async (id: string): Promise<void> => {
+  const retryIfPaused = async (id: string, paid = false): Promise<void> => {
     if (retries.has(id) || runs.has(id)) return;
     if (o.metered) {
       const owner = await people.ownerOf(id);
       if (owner && balanceOf(owner) <= 0) return;
     }
     const state = await FsStore.open(o.root, id).then((st) => st.replay()).catch(() => undefined);
-    if (!state || !pausedForAllowance(state)) return;
+    if (!state || !pausedForAllowance(state) || (!paid && pausedForCredit(state))) return;
     const t = setTimeout(() => {
       retries.delete(id);
       void (async () => {
         try {
           if (runs.has(id)) return;
-          if (await busyElsewhere(id)) return void retryIfPaused(id);
+          if (await busyElsewhere(id)) return void retryIfPaused(id, paid);
           log(`[${id}] trying again after the usage allowance pause`);
           startRun(id, "run");
         } catch {
-          void retryIfPaused(id); // busy with other projects: wait another round
+          void retryIfPaused(id, paid); // busy with other projects: wait another round
         }
       })();
     }, o.resumeEveryMs ?? 30 * 60_000);
@@ -338,14 +373,6 @@ export function createNirmitoServer(o: ServerOptions): NirmitoServer {
     const method = req.method ?? "GET";
 
     if (method === "GET" && (path === "/" || path === "/index.html")) {
-      // An emailed one-time sign-in: this device gets its own session, and the link stops working.
-      const login = url.searchParams.get("login");
-      if (login !== null && o.emailSignIn) {
-        const done = await people.finishEmailLogin(login);
-        res.writeHead(302, { location: done ? "/" : "/?expired=1", ...(done ? { "set-cookie": signInCookie(done.session) } : {}), ...SECURITY_HEADERS });
-        res.end();
-        return;
-      }
       const t = url.searchParams.get("token");
       if (t !== null && o.token && (await viewerFor(t))) {
         res.writeHead(302, { location: "/", "set-cookie": signInCookie(t), ...SECURITY_HEADERS });
@@ -382,6 +409,7 @@ export function createNirmitoServer(o: ServerOptions): NirmitoServer {
       });
       if (paid) {
         const added = await people.addCredit(paid.personId, paid.usd, paid.ref).catch(() => false);
+        if (added) void creditAdded(paid.personId, paid.usd).catch((e: Error) => log(`could not carry on after credit was added: ${e.message}`));
         if (added) log(`credit: USD ${paid.usd} for ${paid.personId} (${paid.ref})`);
       }
       if (notice[1] === "return") {
@@ -414,6 +442,16 @@ export function createNirmitoServer(o: ServerOptions): NirmitoServer {
         if (r.created) log(`${r.person.email} signed up`);
       }
       return send(res, 200, { sent: true });
+    }
+    if (method === "POST" && path === "/api/signin/finish") {
+      // The page asks for this when the person presses its button. Opening the link is not enough, because mail
+      // scanners open every link in an email and would use it up first. This device gets its own session.
+      if (!o.emailSignIn || !o.token) throw new HttpError(404, "not found");
+      const done = await people.finishEmailLogin(text(await body(req), "login", 200));
+      if (!done) return send(res, 410, { error: errorIn(langOf(req), "that sign-in link was already used or is too old; ask for a new one") });
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", "set-cookie": signInCookie(done.session), ...SECURITY_HEADERS });
+      res.end(JSON.stringify({ name: done.person.name }));
+      return;
     }
     if (method === "POST" && path === "/api/signup") {
       if (!o.signup || !o.token) throw new HttpError(403, "this Nirmito does not take sign-ups; ask whoever runs it for a link");

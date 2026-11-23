@@ -38,8 +38,10 @@ async function start(o: { signup?: boolean; metered?: boolean; welcome?: number;
   const signIn = async (email: string) => {
     expect((await call("/api/signin/email", { method: "POST", body: JSON.stringify({ email }) })).json).toEqual({ sent: true });
     const link = sent.at(-1)!.link;
-    const r = await call(new URL(link).pathname + new URL(link).search);
-    expect(r.status).toBe(302);
+    // a mail scanner opening the link does not use it up
+    expect((await call(new URL(link).pathname + new URL(link).search)).status).toBe(200);
+    const r = await call("/api/signin/finish", { method: "POST", body: JSON.stringify({ login: new URL(link).searchParams.get("login") }) });
+    expect(r.status).toBe(200);
     return r.res.headers.get("set-cookie")!.split(";")[0]!;
   };
   return { root, k, call, sent, signIn };
@@ -55,8 +57,9 @@ describe("sign-in by email", { timeout: 120_000 }, () => {
     const me = (await call("/api/config", { cookie })).json["me"];
     expect(me).toMatchObject({ admin: false, email: "rina@example.com", creditUsd: 1 });
     // the same link again does nothing
-    const again = await call(new URL(sent[0]!.link).pathname + new URL(sent[0]!.link).search);
-    expect(again.res.headers.get("location")).toBe("/?expired=1");
+    const again = await call("/api/signin/finish", { method: "POST", body: JSON.stringify({ login: new URL(sent[0]!.link).searchParams.get("login") }) });
+    expect(again.status).toBe(410);
+    expect(again.res.headers.get("set-cookie")).toBeNull();
     // a second device gets its own sign-in; the first keeps working
     const other = await signIn("rina@example.com");
     expect(other).not.toBe(cookie);

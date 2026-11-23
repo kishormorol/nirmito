@@ -373,7 +373,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       fixRound: "Thanks. A fix round has started.", onList: "Thanks. It's on the list for the next fix round.", already: "That's already on the list.", tryingAgain: "Trying again.",
       cantLoad: "Could not load that project.", loading: "Loading…", noProjects: "No projects yet.", cantReach: "Can't reach Nirmito",
       tierNames: { free: "free", cheap: "cheap", best: "best" },
-      emailTitle: "Sign in to Nirmito", emailText: "Give your email and we send you a link that signs you in. No password to remember. New here? The same link makes your account.", emailLabel: "Your email", emailSend: "Send my link", emailSent: (e) => `Check ${e} for a sign-in link. It works once, for 15 minutes.`, emailAgain: "No email? Send again, or use another address", linkExpired: "That sign-in link was already used or is too old. Ask for a new one.",
+      emailTitle: "Sign in to Nirmito", emailText: "Give your email and we send you a link that signs you in. No password to remember. New here? The same link makes your account.", emailLabel: "Your email", emailSend: "Send my link", emailSent: (e) => `Check ${e} for a sign-in link. It works once, for 15 minutes.`, emailFinish: "Press the button to sign in on this device.", emailFinishBtn: "Sign me in", emailAgain: "No email? Send again, or use another address", linkExpired: "That sign-in link was already used or is too old. Ask for a new one.",
       changeByPointing: "Change it by pointing", pointAndChange: "Point and change",
       previewHelp: "Click a part to pick it. Drag a card, row or field to move it. Double-click words to change them. Drop a photo on a part to use it there. Nothing changes until you send.",
       pickedPart: (d) => `Picked: ${d}`, moveUp: "Move up", moveDown: "Move down", removeIt: "Remove it", whatChange: "What should change here?", addChange: "Add",
@@ -430,7 +430,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       fixRound: "ধন্যবাদ। একটি ঠিক করার রাউন্ড শুরু হয়েছে।", onList: "ধন্যবাদ। পরের ঠিক করার রাউন্ডের তালিকায় রাখা হলো।", already: "এটি আগেই তালিকায় আছে।", tryingAgain: "আবার চেষ্টা করা হচ্ছে।",
       cantLoad: "প্রকল্পটি খোলা যায়নি।", loading: "খোলা হচ্ছে…", noProjects: "এখনো কোনো প্রকল্প নেই।", cantReach: "Nirmito-এর সঙ্গে যোগাযোগ করা যাচ্ছে না",
       tierNames: { free: "বিনা খরচের", cheap: "সস্তা", best: "সেরা" },
-      emailAgain: "ইমেইল পাননি? আবার পাঠান, অথবা অন্য ঠিকানা দিন", emailTitle: "Nirmito-এ সাইন ইন করুন", emailText: "আপনার ইমেইল দিন, আমরা সাইন ইন করার একটি লিংক পাঠাব। কোনো পাসওয়ার্ড মনে রাখতে হবে না। নতুন? একই লিংকে আপনার অ্যাকাউন্ট তৈরি হবে।", emailLabel: "আপনার ইমেইল", emailSend: "লিংক পাঠান", emailSent: (e) => `${e} ঠিকানায় সাইন ইন লিংক দেখুন। এটি একবার, ১৫ মিনিটের জন্য কাজ করে।`, linkExpired: "এই সাইন ইন লিংকটি আগেই ব্যবহার হয়েছে বা অনেক পুরোনো। নতুন একটি চান।",
+      emailFinish: "এই ডিভাইসে সাইন ইন করতে বোতামটি চাপুন।", emailFinishBtn: "সাইন ইন করুন", emailAgain: "ইমেইল পাননি? আবার পাঠান, অথবা অন্য ঠিকানা দিন", emailTitle: "Nirmito-এ সাইন ইন করুন", emailText: "আপনার ইমেইল দিন, আমরা সাইন ইন করার একটি লিংক পাঠাব। কোনো পাসওয়ার্ড মনে রাখতে হবে না। নতুন? একই লিংকে আপনার অ্যাকাউন্ট তৈরি হবে।", emailLabel: "আপনার ইমেইল", emailSend: "লিংক পাঠান", emailSent: (e) => `${e} ঠিকানায় সাইন ইন লিংক দেখুন। এটি একবার, ১৫ মিনিটের জন্য কাজ করে।`, linkExpired: "এই সাইন ইন লিংকটি আগেই ব্যবহার হয়েছে বা অনেক পুরোনো। নতুন একটি চান।",
       changeByPointing: "দেখিয়ে বদলান", pointAndChange: "দেখিয়ে বদলান",
       previewHelp: "কোনো অংশ বাছতে তাতে ক্লিক করুন। কার্ড, সারি বা ঘর সরাতে টেনে নিন। লেখা বদলাতে দুবার ক্লিক করুন। কোনো অংশে ছবি ছেড়ে দিলে সেখানে সেই ছবি বসবে। পাঠানোর আগে কিছুই বদলায় না।",
       pickedPart: (d) => `বাছা হয়েছে: ${d}`, moveUp: "ওপরে সরান", moveDown: "নিচে সরান", removeIt: "সরিয়ে দিন", whatChange: "এখানে কী বদলাবে?", addChange: "যোগ করুন",
@@ -990,6 +990,18 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
     main.replaceChildren(card);
     email.focus();
   }
+  /** The link from the email was opened: one press signs this device in. */
+  function finishSignIn(login) {
+    $("composer").hidden = $("projectsBtn").hidden = true;
+    const btn = el("button", { class: "btn", type: "button", onclick: async () => {
+      btn.disabled = true;
+      let expired = "";
+      try { await api("/api/signin/finish", { method: "POST", body: JSON.stringify({ login }) }); } catch { expired = "?expired=1"; }
+      location.replace(`/${expired}`);
+    } }, t("emailFinishBtn"));
+    main.replaceChildren(el("div", { class: "card" }, el("h2", {}, t("emailTitle")), el("p", {}, t("emailFinish")), el("div", { class: "row" }, btn)));
+    btn.focus();
+  }
   function signUp() {
     $("composer").hidden = $("projectsBtn").hidden = true;
     const name = el("input", { maxlength: "80", autocomplete: "name", required: true });
@@ -1148,7 +1160,9 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       main.replaceChildren(el("div", { class: "card problem" }, el("h2", {}, t("cantReach")), el("p", {}, err.message)));
     });
   }
-  start();
+  const login = new URLSearchParams(location.search).get("login");
+  if (login) finishSignIn(login);
+  else start();
 })();
 </script>
 </body>

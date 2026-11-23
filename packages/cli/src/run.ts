@@ -31,7 +31,7 @@ import { join } from "node:path";
 import { readFile, stat } from "node:fs/promises";
 import { ROLE_PRIORS, check, costOf, estimate, isFlatRate, record, type CostLedgerMeta } from "@karigor/budget";
 import type { CostEntry } from "@karigor/store";
-import { QuotaError, buildableTarget, isProducingRole, makeJudge, runAgentWorker, runWorker, summaryArtifact, type AgentAdapter, type ModelAdapter, type ProducingRole, type RoleContext, type Usage, type WorkerBudget, SelectorOutput } from "@karigor/runtime";
+import { CreditError, QuotaError, buildableTarget, isProducingRole, makeJudge, runAgentWorker, runWorker, summaryArtifact, type AgentAdapter, type ModelAdapter, type ProducingRole, type RoleContext, type Usage, type WorkerBudget, SelectorOutput } from "@karigor/runtime";
 
 export interface RunOptions {
   root: string;
@@ -52,6 +52,8 @@ export interface RunOptions {
   skipInstall?: boolean;
   /** Chosen once, when the kernel asks. Defaults to `free` for the mock adapter, `best` where calls cost nothing extra, else `cheap`. */
   tier?: BudgetTier;
+  /** Someone pays for this run by the call: what they have left (USD, before any margin), and a note of each call's cost. */
+  credit?: { left(): number; used(usd: number): void };
   clock?: () => Date;
   committer?: Committer;
   templatesDir?: string;
@@ -170,6 +172,10 @@ async function runProjectLocked(opts: RunOptions): Promise<ProjectState> {
   const budgetFor = (phaseName: string, role: Role, itemId?: string): WorkerBudget => ({
     allow: (tier) => {
       const phase = budgetPhase(phaseName);
+      if (opts.credit) {
+        const cost = estimateCall(role, opts.adapter.name === "mock" ? "mock" : tier);
+        if (cost > 0 && cost > opts.credit.left()) throw new CreditError("credit used up");
+      }
       if (!ledger) return { ok: true, reason: "no ledger yet" };
       const r = check({ ledger, phase, estimatedCost: estimateCall(role, opts.adapter.name === "mock" ? "mock" : tier), tier, downgraded: state.downgradedPhases.includes(phaseName), parkableItems: itemId ? parkableItems() : 0 });
       return r.ok ? { ok: true, reason: r.reason } : { ok: false, action: r.action!, reason: r.reason };
@@ -189,6 +195,7 @@ async function runProjectLocked(opts: RunOptions): Promise<ProjectState> {
         phase: budgetPhase(phaseName),
         ...(e.costUsd !== undefined && isFlatRate(e.model) ? { apiEquivalentCost: e.costUsd } : {}),
       };
+      opts.credit?.used(entry.cost);
       if (ledger) ledger = record(ledger, entry);
       else pending.push(entry);
     },
@@ -639,11 +646,11 @@ async function runProjectLocked(opts: RunOptions): Promise<ProjectState> {
   } catch (e) {
     // The provider's allowance ran out mid-step: nothing failed, so nothing is counted against the work.
     if (!(e instanceof QuotaError)) throw e;
-    const reason = `the model's usage allowance is used up${e.resets ? ` (it resets ${e.resets})` : ""}; nothing failed, and the work carries on with nirmito resume after that`;
+    const reason = e instanceof CreditError ? CREDIT_PAUSE : `the model's usage allowance is used up${e.resets ? ` (it resets ${e.resets})` : ""}; nothing failed, and the work carries on with nirmito resume after that`;
     log(`  paused: ${reason}`);
     await saveLedger();
     await append({ type: "project-paused", by: "system", reason });
-    await store.commit("karigor: paused (usage allowance used up)");
+    await store.commit(e instanceof CreditError ? "karigor: paused (credit used up)" : "karigor: paused (usage allowance used up)");
   } finally {
     // Previews do not outlive the run; production is served by `nirmito serve` or the hosting target.
     await opts.deploy?.stop();
@@ -697,6 +704,10 @@ function renderLedgerBody(m: MetaOf<"cost-ledger">): string {
 }
 
 export type { Usage };
+
+const CREDIT_PAUSE = "the credit left does not cover the next step; nothing failed, and the work carries on when credit is added";
+/** Paused until whoever pays for it adds credit; trying again before that would only pause it again. */
+export const pausedForCredit = (s: ProjectState): boolean => s.status === "waiting" && s.pausedReason === CREDIT_PAUSE;
 
 /** The project stopped only because the model's usage allowance ran out; nothing is wrong with the work. */
 export const pausedForAllowance = (s: ProjectState): boolean => s.status === "waiting" && Boolean(s.pausedReason);

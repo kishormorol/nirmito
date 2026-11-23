@@ -1,5 +1,5 @@
-import { mkdir, readdir, rm } from "node:fs/promises";
-import { basename, dirname, resolve } from "node:path";
+import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { basename, dirname, join, resolve } from "node:path";
 import type { Profile } from "@karigor/profiles";
 import { run, type ExecResult } from "./exec.js";
 
@@ -12,6 +12,8 @@ export interface ChangedFile {
   action: "write" | "delete";
 }
 
+/** The version the templates pin. */
+const PNPM = "pnpm@10.34.7";
 export const BASELINE_TAG = "karigor-baseline";
 
 /** The project's code: a git repository scaffolded from a target profile. */
@@ -50,7 +52,21 @@ export class Workspace {
     const ws = new Workspace(dir);
     const r = await ws.git(["rev-parse", "--is-inside-work-tree"]);
     if (r.code !== 0) throw new WorkspaceError(`no workspace at ${dir}`);
+    await ws.pinPnpm();
     return ws;
+  }
+
+  /** An app made before templates pinned pnpm gets the pin, since newer pnpm refuses to install it. Nothing else is touched. */
+  private async pinPnpm(): Promise<void> {
+    const file = join(this.dir, "package.json");
+    const text = await readFile(file, "utf8").catch(() => "");
+    if (!text || text.includes('"packageManager"') || !(await stat(join(this.dir, "pnpm-lock.yaml")).then(() => true, () => false))) return;
+    // Someone is in the middle of changing it: their commit comes first.
+    if ((await this.git(["status", "--porcelain", "--", "package.json"])).stdout.trim()) return;
+    const pinned = text.replace(/^\{(\r?\n)/, `{$1  "packageManager": "${PNPM}",$1`);
+    if (pinned === text) return;
+    await writeFile(file, pinned);
+    await this.git(["commit", "-q", "-m", "karigor: pin the pnpm version", "--", "package.json"]);
   }
 
   async head(): Promise<string> {

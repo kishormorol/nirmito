@@ -255,6 +255,7 @@ const REASONS_BN: [RegExp, (...m: string[]) => string][] = [
   [/^the new version failed after going live; the previous version \((\S+)\) is back and a fix is queued$/, (v) => `নতুন সংস্করণ চালু হওয়ার পর সমস্যা করছিল; আগের সংস্করণ (${v}) ফিরিয়ে আনা হয়েছে আর ঠিক করার কাজ তালিকায় রাখা হয়েছে`],
   [/^the new version failed after going live; it was taken offline and a fix is queued$/, () => "নতুন সংস্করণ চালু হওয়ার পর সমস্যা করছিল; এটি অফলাইনে নেওয়া হয়েছে আর ঠিক করার কাজ তালিকায় রাখা হয়েছে"],
   [/^out of budget: ?(.*)$/, (x) => `বাজেট শেষ${x ? `: ${x}` : ""}`],
+  [/^the credit left does not cover the next step; nothing failed, and the work carries on when credit is added$/, () => "বাকি ক্রেডিটে পরের ধাপ হবে না; কিছু ব্যর্থ হয়নি, ক্রেডিট যোগ করলে কাজ চলবে"],
   [/^the model's usage allowance is used up(?: \(it resets (.+?)\))?; nothing failed, and the work carries on with nirmito resume after that$/, (at) => `মডেলের ব্যবহারের সীমা শেষ${at ? ` (আবার পাওয়া যাবে ${at})` : ""}; কিছু ব্যর্থ হয়নি, সীমা ফিরলে nirmito resume দিলে কাজ চলবে`],
   [/^failed (\d+) times; retry budget exhausted$/, (n) => `${n} বার ব্যর্থ; আর চেষ্টার সুযোগ নেই`],
   [/^blocked: depends on "([^"]+)", which is not in the backlog$/, (d) => `আটকে আছে: "${d}"-এর ওপর নির্ভর করে, যা তালিকায় নেই`],
