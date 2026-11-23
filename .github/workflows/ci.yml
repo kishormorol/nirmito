@@ -34,6 +34,7 @@ jobs:
             cp -r packages/profiles/scaffolds/web-app /tmp/app && cd /tmp/app
             export CI=1
             pnpm install --silent
+            pnpm audit --prod --audit-level high
             pnpm exec playwright install chromium
             pnpm build
             pnpm e2e'
