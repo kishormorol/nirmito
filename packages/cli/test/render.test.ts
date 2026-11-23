@@ -17,7 +17,7 @@ describe("renderers", () => {
     const status = await renderStatus(store, state);
     expect(status).toMatch(/Idea: A site where neighbours lend tools/);
     expect(status).toMatch(/Status: finished\. ToolShare is live/);
-    expect(status).toMatch(/Link: https:\/\/toolshare.pages.dev/);
+    expect(status).toMatch(/Link: https:\/\/toolshare.example/);
     expect(status).toMatch(/Work: 3 done, 0 in progress, 0 to do, 0 parked/);
     expect(status).toMatch(/Decisions made on your behalf/);
     expect(status).toMatch(/- a3: English only for now\./);

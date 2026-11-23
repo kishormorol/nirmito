@@ -134,7 +134,7 @@ To let anyone use Karigor with nothing to install, run [`hosting/setup.sh`](host
 curl -fsSL https://raw.githubusercontent.com/kishormorol/karigor/main/hosting/setup.sh | bash
 ```
 
-It installs Docker and starts Karigor, a free open-source model (Ollama) and Caddy for HTTPS. People open the address it prints, sign up with a name and build by chatting. Each app stays running at its own address (`https://a3100.<your-ip>.sslip.io` and so on), and certificates are made only for apps Karigor actually hosts. Without a domain it uses `sslip.io`, which needs no setup. Running the script again updates Karigor and keeps every project.
+It installs Docker and starts Karigor, a free open-source model (Ollama) and Caddy for HTTPS. People open the address it prints, sign up with a name and build by chatting. Each app stays running at its own address (`https://a3100.<your-ip>.sslip.io` and so on), and certificates are made only for apps Karigor actually hosts. Without a domain it uses `sslip.io`, which needs no setup. Running the script again updates Karigor and keeps every project. To sign people in by email, give them credit or take payments, add those settings to `/opt/karigor/hosting/.env` (`karigor-server --help` lists them) and run it again.
 
 The free model on a CPU is slow, and weaker than Claude: expect a build to take many hours and more of the work to be set aside. Builds run code the AI wrote on that server, so keep nothing else on it.
 

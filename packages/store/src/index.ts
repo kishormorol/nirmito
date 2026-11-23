@@ -8,3 +8,4 @@ export * from "./lock.js";
 export * from "./language.js";
 export * from "./given.js";
 export * from "./owner-secret.js";
+export * from "./platform.js";

@@ -4,8 +4,10 @@ FROM node:22-bookworm-slim
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git ca-certificates tar \
- && rm -rf /var/lib/apt/lists/* \
- && corepack enable
+ && corepack enable \
+ # What Chromium needs to run: a web app is released only after its browser journeys pass here.
+ && npx -y playwright@1.65.1 install-deps chromium \
+ && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./

@@ -16,3 +16,35 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
+  # The self-hosted image: it starts with nothing but a token, and a new web app builds and passes its browser journeys in it.
+  image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker build -t karigor .
+      - name: starts with empty settings
+        run: |
+          docker run -d --name k -e KARIGOR_TOKEN=check -e KARIGOR_URL= -e KARIGOR_METERED= -p 4321:4321 karigor
+          for i in $(seq 20); do curl -fsS localhost:4321/healthz && exit 0; sleep 1; done
+          docker logs k; exit 1
+      - name: browser journeys run in it
+        run: |
+          docker run --rm karigor sh -ec '
+            cp -r packages/profiles/scaffolds/web-app /tmp/app && cd /tmp/app
+            CI=1 pnpm install --silent && pnpm exec playwright install chromium
+            CI=1 pnpm build && CI=1 pnpm e2e'
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      # A build that silently matched no packages would still exit 0.
+      - run: node packages/server/dist/bin.js --help
+      - run: pnpm test

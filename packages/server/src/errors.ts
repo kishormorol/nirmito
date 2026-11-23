@@ -12,6 +12,7 @@ const EXACT: Record<string, string> = {
   "it is not finished yet": "এটি এখনো শেষ হয়নি",
   "it is being worked on right now; try again when this round finishes": "এখন এটির কাজ চলছে; এই রাউন্ড শেষ হলে আবার চেষ্টা করুন",
   "this Karigor does not put apps online, so there is nowhere to store settings": "এই Karigor অ্যাপ অনলাইনে তোলে না, তাই সেটিং রাখার কোনো জায়গা নেই",
+  "too many sign-in emails were asked for; try again in an hour": "অনেকবার সাইন ইন ইমেইল চাওয়া হয়েছে; এক ঘণ্টা পরে আবার চেষ্টা করুন",
   "not found": "পাওয়া যায়নি",
   "that does not look like an email address": "এটি ঠিক ইমেইল ঠিকানার মতো দেখাচ্ছে না",
   "the file is too big (at most 10 MB)": "ফাইলটি অনেক বড় (সর্বোচ্চ ১০ MB)",

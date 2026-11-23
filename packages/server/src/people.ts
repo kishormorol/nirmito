@@ -1,6 +1,7 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
 import { readFile, rename, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { ownerOnly } from "@karigor/store";
 
 /** Someone with their own sign-in link. Only a hash of the link's secret is kept. */
 export interface Person {
@@ -58,6 +59,7 @@ export class People {
       const out = fn(people);
       const tmp = `${this.file}.${process.pid}.tmp`;
       await writeFile(tmp, JSON.stringify(people, null, 2), { mode: 0o600 });
+      await ownerOnly(tmp);
       await rename(tmp, this.file);
       return out;
     });

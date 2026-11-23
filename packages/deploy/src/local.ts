@@ -1,8 +1,9 @@
-import { appendFile, chmod, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import type { CommandResult } from "@karigor/gates";
 import { TARGET_SETTINGS, readSettings, requiredSettings, toMissing, type MissingSetting, type Profile } from "@karigor/profiles";
 import { Workspace, clip, run } from "@karigor/sandbox";
+import { ownerOnly } from "@karigor/store";
 import { freePort, startServer, type RunningServer } from "./server.js";
 import type { DeployAdapter, DeployRequest, DeployResult, LiveRelease } from "./types.js";
 
@@ -219,7 +220,7 @@ export class LocalDeploy implements DeployAdapter {
     await this.ignoreReleasesInProjectGit();
     await mkdir(join(this.o.projectDir, "run"), { recursive: true, mode: 0o700 });
     await writeFile(this.settingsFile, JSON.stringify({ ...(await this.storedSettings()), ...values }, null, 2) + "\n", { encoding: "utf8", mode: 0o600 });
-    await chmod(this.settingsFile, 0o600);
+    await ownerOnly(this.settingsFile);
     return { ok: true, output: `saved on this computer: ${Object.keys(values).join(", ")}` };
   }
 

@@ -3,6 +3,8 @@
 services:
   karigor:
     build: ..
+    # Every setting in .env (sign-in by email, credit, payments, the model key: see `karigor-server --help`).
+    env_file: .env
     environment:
       KARIGOR_TOKEN: ${KARIGOR_TOKEN:?run setup.sh, which makes it}
       KARIGOR_URL: https://${KARIGOR_DOMAIN}
@@ -10,7 +12,7 @@ services:
       KARIGOR_SIGNUP: ${KARIGOR_SIGNUP:-open}
       KARIGOR_ADAPTER: ${KARIGOR_ADAPTER:-ollama}
       KARIGOR_OLLAMA_MODEL: ${KARIGOR_OLLAMA_MODEL:-qwen2.5:7b}
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      KARIGOR_TRUST_PROXY: "1"   # only Caddy, below, can reach it
       KARIGOR_DEPLOY: local
     volumes:
       - karigor-data:/data

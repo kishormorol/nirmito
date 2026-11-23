@@ -76,14 +76,14 @@ describe("the live app's look", () => {
   });
 });
 
-describe.runIf(process.platform !== "win32")("the Android signing key", { timeout: 60_000 }, () => {
+describe("the Android signing key", { timeout: 60_000 }, () => {
   it("is made once, kept private and out of git, and Java reads it with the same fingerprint", async () => {
     if (!(await has("openssl"))) return;
     const dir = await mkdtemp(join(tmpdir(), "karigor-signing-"));
     const k = await signingKey(dir, "Rina's Shop");
     expect(k.fingerprint).toMatch(/^([0-9A-F]{2}:){31}[0-9A-F]{2}$/);
     expect((await signingKey(dir, "Rina's Shop")).fingerprint).toBe(k.fingerprint);
-    expect((await stat(k.file)).mode & 0o777).toBe(0o600);
+    if (process.platform !== "win32") expect((await stat(k.file)).mode & 0o777).toBe(0o600);
     expect(await stat(join(dir, "phone-signing", "upload.key")).then(() => true, () => false)).toBe(false);
     expect(await readFile(join(dir, ".gitignore"), "utf8")).toContain("phone-signing/");
     if (await has("keytool")) {

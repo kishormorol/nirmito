@@ -1,6 +1,7 @@
-import { spawn, type ChildProcess } from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { createServer } from "node:net";
 import { checkUrl } from "@karigor/sandbox";
+import { start, stopTree } from "@karigor/store";
 
 /** A release started as a long-running process. */
 export class RunningServer {
@@ -74,18 +75,7 @@ export class RunningServer {
   /** Stop the whole process group, politely first. */
   async stop(): Promise<void> {
     if (!this.alive || this.child.pid === undefined) return;
-    const pid = this.child.pid;
-    const kill = (sig: NodeJS.Signals) => {
-      try {
-        process.kill(-pid, sig);
-      } catch {
-        try {
-          this.child.kill(sig);
-        } catch {
-          /* already gone */
-        }
-      }
-    };
+    const kill = (sig: NodeJS.Signals) => stopTree(this.child, sig);
     const gone = new Promise<void>((res) => this.child.once("exit", () => res()));
     kill("SIGTERM");
     const timer = new Promise<"timeout">((res) => setTimeout(() => res("timeout"), 5_000));
@@ -102,10 +92,11 @@ const wrongPort = (other: number, given: number) =>
 /** Start `argv` in `cwd` with `PORT` set, in its own process group so it can be stopped as a whole. */
 export function startServer(argv: string[], cwd: string, port: number, env: NodeJS.ProcessEnv = {}): RunningServer {
   const [cmd, ...args] = argv;
-  const child = spawn(cmd!, args, {
+  const child = start(cmd!, args, {
     cwd,
     env: { ...process.env, NODE_ENV: "production", ...env, PORT: String(port) },
-    detached: true,
+    // Its own process group, where there are groups; on Windows it would only open a console window.
+    detached: process.platform !== "win32",
     stdio: ["ignore", "pipe", "pipe"],
   });
   child.on("error", () => {

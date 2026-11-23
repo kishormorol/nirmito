@@ -177,6 +177,18 @@ describe("Playwright reports", () => {
     expect(parsePlaywrightJson("not json")).toEqual({ passed: 0, failed: 0, failures: [] });
   });
 
+  it("counts each screen size of a journey as a run, and says which size failed when the other passed", () => {
+    const spec = (title: string, phone: string) => ({
+      title, file: "a.spec.ts", ok: phone === "expected",
+      tests: [
+        { projectName: "desktop", status: "expected", results: [{ status: "passed" }] },
+        { projectName: "phone", status: phone, results: [{ status: phone === "expected" ? "passed" : "failed", error: { message: "Error: the menu covers the button" } }] },
+      ],
+    });
+    const report = JSON.stringify({ suites: [{ title: "a.spec.ts", file: "a.spec.ts", specs: [spec("sells", "expected"), spec("buys", "unexpected")] }] });
+    expect(parsePlaywrightJson(report)).toEqual({ passed: 3, failed: 1, failures: ["a.spec.ts › buys (phone only): Error: the menu covers the button"] });
+  });
+
   it("says where a timed-out journey got stuck, so the fix starts at the right step", () => {
     const timeout = "Test timeout of 30000ms exceeded.";
     const report = JSON.stringify({

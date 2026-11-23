@@ -1,7 +1,8 @@
 import { execFile } from "node:child_process";
-import { chmod, readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ignoreInProjectGit } from "./lock.js";
+import { ownerOnly } from "./platform.js";
 
 /**
  * The one setting value Karigor keeps: the key a hosted app accepts when Karigor asks it for the owner's
@@ -19,7 +20,7 @@ export async function keepOwnerSecret(projectDir: string, values: Record<string,
   await new Promise<void>((done) => execFile("git", ["rm", "--cached", "-q", "--ignore-unmatch", FILE], { cwd: projectDir }, () => done()));
   await writeFile(join(projectDir, FILE), v, { mode: 0o600 });
   // `mode` applies only when the file is new.
-  await chmod(join(projectDir, FILE), 0o600);
+  await ownerOnly(join(projectDir, FILE));
 }
 
 export async function ownerSecret(projectDir: string): Promise<string | undefined> {

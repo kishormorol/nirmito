@@ -15,7 +15,7 @@
     "karigor-server": "./dist/bin.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && chmod +x dist/bin.js",
+    "build": "tsc -p tsconfig.json && node -e \"fs.chmodSync('dist/bin.js',0o755)\"",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

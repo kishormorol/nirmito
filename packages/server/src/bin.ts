@@ -5,6 +5,9 @@ import { parseArgs } from "node:util";
 import { logMailer, resendMailer } from "./mail.js";
 import { PaddleProvider, SslCommerzProvider, type PaymentProvider } from "./billing.js";
 
+// Docker Compose passes a setting nobody gave as an empty string; that means not set.
+for (const [k, v] of Object.entries(process.env)) if (v === "" && /^(KARIGOR_|PADDLE_|SSLCOMMERZ_|RESEND_|ANTHROPIC_|VERCEL_TOKEN|PORT$)/.test(k)) delete process.env[k];
+
 /** The payment providers whose settings are present. */
 function billingFromEnv(publicUrl: string): { billing?: { providers: PaymentProvider[]; packs: number[] } } {
   const e = process.env;
@@ -57,6 +60,7 @@ To run it as a service for many people (sign-in by email, credit for builds):
   KARIGOR_URL=https://karigor.example.com   this Karigor's public address (needed for the emailed links)
   KARIGOR_EMAIL_SIGNIN=1                    people sign in with a one-time link sent to their email
   RESEND_API_KEY, KARIGOR_MAIL_FROM         send those emails through Resend (without them, links go to this log)
+  KARIGOR_TRUST_PROXY=1                     a web server in front names callers (X-Forwarded-For); sign-in emails are limited per caller
   KARIGOR_WELCOME_CREDIT=1                  USD of credit for each new sign-up (with KARIGOR_SIGNUP=open)
   KARIGOR_METERED=20                        charge builds on this Karigor's model key: cost plus this % margin
   KARIGOR_TIER=cheap                        which models build: cheap or best (default cheap when builds are charged for)
@@ -97,6 +101,7 @@ const { server } = createKarigorServer({
   appPort: Number(v["app-port"]),
   ...(token ? { token } : {}),
   signup: process.env["KARIGOR_SIGNUP"] === "open",
+  trustProxy: process.env["KARIGOR_TRUST_PROXY"] === "1",
   ...(process.env["KARIGOR_EMAIL_SIGNIN"] === "1"
     ? {
         emailSignIn: {

@@ -13,15 +13,16 @@ afterEach(async () => {
   }
 }, 120_000);
 
-async function start(o: { signup?: boolean; metered?: boolean; welcome?: number } = {}) {
+async function start(o: { signup?: boolean; metered?: boolean; welcome?: number; trustProxy?: boolean; adapter?: string } = {}) {
   const root = await mkdtemp(join(tmpdir(), "karigor-accounts-"));
   const sent: { to: string; link: string }[] = [];
   const mailer: Mailer = async (to, link) => (sent.push({ to, link }), { ok: true, output: "sent" });
   const k = createKarigorServer({
     root,
-    adapter: "demo",
+    adapter: o.adapter ?? "demo",
     token: "admin-token",
     ...(o.signup ? { signup: true } : {}),
+    ...(o.trustProxy ? { trustProxy: true } : {}),
     emailSignIn: { url: "https://karigor.example.com", mailer },
     ...(o.welcome !== undefined ? { welcomeCreditUsd: o.welcome } : {}),
     ...(o.metered ? { metered: { marginPct: 20 } } : {}),
@@ -60,6 +61,25 @@ describe("sign-in by email", { timeout: 120_000 }, () => {
     const other = await signIn("rina@example.com");
     expect(other).not.toBe(cookie);
     expect((await call("/api/config", { cookie })).status).toBe(200);
+  });
+
+  it("sends at most five links to one address in a while, answers the same after that, and limits one caller", async () => {
+    const { call, sent } = await start({ signup: true, trustProxy: true });
+    const ask = (email: string, from: string) => call("/api/signin/email", { method: "POST", body: JSON.stringify({ email }), headers: { "x-forwarded-for": from } });
+    for (let i = 0; i < 7; i++) expect((await ask(i % 2 ? "rina@example.com" : "Rina@Example.com", "203.0.113.1")).json).toEqual({ sent: true });
+    expect(sent.length).toBe(5);
+    for (let i = 0; i < 13; i++) expect((await ask(`p${i}@example.com`, "203.0.113.1")).status).toBe(200);
+    expect((await ask("one-more@example.com", "203.0.113.1")).status).toBe(429);
+    // an address the caller made up does not help, since only the last one was added by the server in front
+    expect((await ask("one-more@example.com", "198.51.100.9, 203.0.113.1")).status).toBe(429);
+    expect((await ask("one-more@example.com", "203.0.113.2")).status).toBe(200);
+  });
+
+  it("does not let a made-up key build without credit where keys are not used", async () => {
+    const { call, signIn } = await start({ signup: true, welcome: 0, metered: true, adapter: "ollama" });
+    const cookie = await signIn("rina@example.com");
+    const r = await call("/api/projects", { method: "POST", cookie, body: JSON.stringify({ idea: "A page for my shop", apiKey: "anything" }) });
+    expect(r.status).toBe(402);
   });
 
   it("answers the same whether or not an address has an account, and makes none when sign-ups are closed", async () => {

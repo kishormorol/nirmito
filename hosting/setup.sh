@@ -7,6 +7,8 @@
 # Without a domain it uses <your-ip>.sslip.io, which needs nothing set up. With one, point
 # karigor.example.com and *.apps.example.com at this server, then run:
 #   KARIGOR_DOMAIN=karigor.example.com KARIGOR_APPS_DOMAIN=apps.example.com bash setup.sh
+# To sign people in by email, give credit or take payments, add those settings (listed by
+# `karigor-server --help`) to /opt/karigor/hosting/.env and run it again.
 # Running it again updates Karigor and keeps everyone's projects.
 set -euo pipefail
 

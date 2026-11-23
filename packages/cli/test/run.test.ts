@@ -53,7 +53,7 @@ describe("runProject: golden path", () => {
       expect(ledger.meta.entries.length).toBeGreaterThan(5);
       expect(ledger.meta.entries.reduce((s, e) => s + e.cost, 0)).toBe(0);
       const summary = await store.readArtifact("summary", (await store.listArtifacts("summary"))[0]!);
-      expect(summary.meta.url).toBe("https://toolshare.pages.dev");
+      expect(summary.meta.url).toBe("https://toolshare.example");
     });
   }
 

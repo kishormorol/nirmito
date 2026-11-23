@@ -17,7 +17,11 @@ describe("the owner secret Karigor keeps", () => {
     await gitCommitter.commit(dir, "before");
     await keepOwnerSecret(dir, { OWNER_LINK_SECRET: "s3cret", OTHER: "x" });
     expect(await ownerSecret(dir)).toBe("s3cret");
-    if (process.platform !== "win32") expect((await stat(join(dir, "owner-link-secret"))).mode & 0o777).toBe(0o600); // Windows has no owner-only mode
+    if (process.platform === "win32") {
+      // one entry, not inherited: this user's
+      const { stdout } = await run(join(process.env["SystemRoot"]!, "System32", "icacls.exe"), [join(dir, "owner-link-secret")]);
+      expect(stdout.match(/:\(.*\)/g)).toEqual([":(F)"]);
+    } else expect((await stat(join(dir, "owner-link-secret"))).mode & 0o777).toBe(0o600);
     expect(await readFile(join(dir, ".gitignore"), "utf8")).toContain("owner-link-secret");
     await gitCommitter.commit(dir, "after");
     expect((await run("git", ["ls-files"], { cwd: dir })).stdout).not.toContain("owner-link-secret");

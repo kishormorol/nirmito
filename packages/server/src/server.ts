@@ -56,6 +56,8 @@ export interface ServerOptions {
   tier?: string;
   /** Buying credit: the providers people may pay with, and the amounts (USD) they may buy. */
   billing?: { providers: PaymentProvider[]; packs: number[] };
+  /** A web server in front names the caller in X-Forwarded-For (Caddy does). Only then is that header believed. */
+  trustProxy?: boolean;
   /** How long a project paused for the usage allowance waits before trying again (default 30 minutes). */
   resumeEveryMs?: number;
   log?: (line: string) => void;
@@ -160,6 +162,20 @@ function optionalKey(b: Record<string, unknown>): string | undefined {
   return typeof k === "string" && k.trim() ? k.trim() : undefined;
 }
 
+/** How often something may happen, counted over a sliding window. Kept in memory: a restart starts the count again. */
+class Limits {
+  private readonly seen = new Map<string, number[]>();
+
+  allow(key: string, most: number, withinMs: number): boolean {
+    const now = Date.now();
+    if (this.seen.size > 10_000) for (const [k, at] of this.seen) if (now - at.at(-1)! > 60 * 60_000) this.seen.delete(k);
+    const recent = (this.seen.get(key) ?? []).filter((t) => now - t < withinMs);
+    if (recent.length >= most) return false;
+    this.seen.set(key, [...recent, now]);
+    return true;
+  }
+}
+
 const signInCookie = (token: string) => `karigor_token=${encodeURIComponent(token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=31536000`;
 
 const SECURITY_HEADERS = {
@@ -249,6 +265,8 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
     log(`[${id}] charged ${owner.name} USD ${usd.toFixed(4)}`);
   };
   /** Whether a build may start for this viewer: always with their own key or unmetered; otherwise they need credit left. */
+  // A key counts as theirs only where it is used: the others ignore it and spend this Karigor's own allowance (demo spends nothing).
+  const ownKey = (b: Record<string, unknown>) => (o.adapter === "claude" || o.adapter === "demo" ? optionalKey(b) : undefined);
   const mayBuild = (v: Viewer, apiKey: string | undefined): boolean => !o.metered || !!apiKey || v.admin || balanceOf(v.person) > 0;
   const needCredit = (v: Viewer, apiKey: string | undefined): void => {
     if (!mayBuild(v, apiKey)) throw new HttpError(402, "your credit has run out; add credit to keep building");
@@ -306,6 +324,11 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
   const whoIs = (req: IncomingMessage) => {
     const h = req.headers.authorization;
     return viewerFor(h?.startsWith("Bearer ") ? h.slice(7) : cookie(req, "karigor_token"));
+  };
+  const asks = new Limits();
+  const callerOf = (req: IncomingMessage): string => {
+    const forwarded = o.trustProxy ? String(req.headers["x-forwarded-for"] ?? "").split(",").at(-1)?.trim() : "";
+    return forwarded || (req.socket.remoteAddress ?? "unknown");
   };
   const sees = (v: Viewer, id: string) => v.admin || v.person.projects.includes(id);
 
@@ -374,6 +397,10 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       const b = await body(req);
       const email = text(b, "email", 200);
       const lang = isLang(b["lang"]) ? b["lang"] : "en";
+      // Nobody's inbox is flooded and no one fills this Karigor with accounts. A known address past its limit gets
+      // the same answer as always, since the emails already sent still work.
+      if (!asks.allow(`from ${callerOf(req)}`, 20, 60 * 60_000)) throw new HttpError(429, "too many sign-in emails were asked for; try again in an hour");
+      if (!asks.allow(`to ${email.toLowerCase()}`, 5, 15 * 60_000)) return send(res, 200, { sent: true });
       let r;
       try {
         r = await people.startEmailLogin(email, o.signup ? { creditUsd: o.welcomeCreditUsd ?? 0, max: o.maxPeople ?? 200 } : undefined);
@@ -451,12 +478,12 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       // Their own idea, or a ready-made one with their changes in `idea`.
       const starter = typeof b["starter"] === "string" ? b["starter"] : undefined;
       const idea = starter === undefined ? text(b, "idea") : ideaForStarter(starter, typeof b["idea"] === "string" ? b["idea"] : undefined, isLang(b["lang"]) ? b["lang"] : "en");
-      if (o.adapter === "claude" && !process.env["ANTHROPIC_API_KEY"] && !optionalKey(b)) throw new HttpError(400, "this Karigor uses your own Anthropic key; add it first");
-      needCredit(viewer, optionalKey(b));
+      if (o.adapter === "claude" && !process.env["ANTHROPIC_API_KEY"] && !ownKey(b)) throw new HttpError(400, "this Karigor uses your own Anthropic key; add it first");
+      needCredit(viewer, ownKey(b));
       const id = await createProject(o.root, idea);
       if (!viewer.admin) await people.own(viewer.person.id, id);
       // `hold`: the page adds the person's files first, then starts it with resume.
-      if (b["hold"] !== true) startRun(id, "run", optionalKey(b));
+      if (b["hold"] !== true) startRun(id, "run", ownKey(b));
       return send(res, 201, { projectId: id });
     }
 
@@ -516,8 +543,8 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       const b = await body(req);
       await view(id);
       if (await busyElsewhere(id)) throw new HttpError(409, "it is already being worked on from another window or the command line");
-      needCredit(viewer, optionalKey(b));
-      const started = startRun(id, "run", optionalKey(b));
+      needCredit(viewer, ownKey(b));
+      const started = startRun(id, "run", ownKey(b));
       return send(res, 202, { started });
     }
     if (method === "POST" && action === "grow") {
@@ -525,8 +552,8 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       const v = await view(id);
       if (!v.nextStage) throw new HttpError(409, v.status === "finished" ? "every part of the plan is built" : "it is not finished yet");
       if (await busyElsewhere(id)) throw new HttpError(409, "it is already being worked on from another window or the command line");
-      needCredit(viewer, optionalKey(b));
-      return send(res, 202, { started: startRun(id, "grow", optionalKey(b)), stage: v.nextStage.name });
+      needCredit(viewer, ownKey(b));
+      return send(res, 202, { started: startRun(id, "grow", ownKey(b)), stage: v.nextStage.name });
     }
     if (method === "POST" && action === "feedback") {
       const b = await body(req);
@@ -541,7 +568,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       }
       // `edit`: a change made by pointing at the app in the preview, which takes the fast lane.
       const [workItemId] = await recordSignals(store, [b["edit"] === true ? editSignal(said) : feedbackSignal(said)]);
-      const fixing = !runs.has(id) && canStartMaintenance(await store.replay()) && mayBuild(viewer, optionalKey(b)) ? startRun(id, "fix", optionalKey(b)) : false;
+      const fixing = !runs.has(id) && canStartMaintenance(await store.replay()) && mayBuild(viewer, ownKey(b)) ? startRun(id, "fix", ownKey(b)) : false;
       return send(res, 202, { workItemId: workItemId ?? null, fixing });
     }
     if (method === "POST" && action === "corrections") {
@@ -553,7 +580,7 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       const r = await correctAssumption(store, text(b, "decisionId", 20), text(b, "text")).catch((e: Error) => {
         throw new HttpError(400, e.message);
       });
-      const fixing = r.workItemId && !runs.has(id) && canStartMaintenance(await store.replay()) && mayBuild(viewer, optionalKey(b)) ? startRun(id, "fix", optionalKey(b)) : false;
+      const fixing = r.workItemId && !runs.has(id) && canStartMaintenance(await store.replay()) && mayBuild(viewer, ownKey(b)) ? startRun(id, "fix", ownKey(b)) : false;
       return send(res, 202, { ...r, fixing });
     }
     if (method === "POST" && action === "settings") {
@@ -579,8 +606,8 @@ export function createKarigorServer(o: ServerOptions): KarigorServer {
       await p.catch((e: Error) => {
         throw new HttpError(400, e.message);
       });
-      if (result!.resumed) startRun(id, "run");
-      return send(res, 200, { stored: result!.stored, stillMissing: result!.stillMissing, url: result!.url ?? null, resumed: !!result!.resumed });
+      if (result!.resumed && mayBuild(viewer, undefined)) startRun(id, "run");
+      return send(res, 200, { stored: result!.stored, stillMissing: result!.stillMissing, url: result!.url ?? null, resumed: !!result!.resumed && runs.has(id) });
     }
     if (method === "POST" && action === "files") {
       await view(id);

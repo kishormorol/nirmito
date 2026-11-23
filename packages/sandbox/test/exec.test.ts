@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -24,6 +24,16 @@ describe("running a command", () => {
     await new Promise((res) => setTimeout(res, 300));
     const alive = (() => { try { process.kill(pid, 0); return true; } catch { return false; } })();
     expect(alive).toBe(false);
+  });
+
+  it.runIf(process.platform === "win32")("starts a .cmd program by name, and passes its arguments through unchanged", async () => {
+    const dir = await mkdtemp(join(tmpdir(), "karigor-cmd-"));
+    await writeFile(join(dir, "echo-args.js"), "console.log(JSON.stringify(process.argv.slice(2)))");
+    await writeFile(join(dir, "kg-echo.cmd"), '@node "%~dp0echo-args.js" %*\r\n');
+    const PATH = `${dir};${process.env["PATH"]}`;
+    const r = await run("kg-echo", ["two words", 'a "quote"', "a&b", "%PATH%"], { cwd: dir, env: { PATH } });
+    expect(r.code).toBe(0);
+    expect(JSON.parse(r.stdout)).toEqual(["two words", 'a "quote"', "a&b", "%PATH%"]);
   });
 
   it("returns the exit code and output otherwise", async () => {

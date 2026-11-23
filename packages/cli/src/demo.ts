@@ -77,7 +77,7 @@ export function answerFor(req: ModelRequest<unknown>, attempt: number, o: Script
     case "skeptic":
       return { verdict: "pass", citations: citeFirst(req.user), reasons: [], minor: ["checked every point"] };
     case "releaser": {
-      const url = o.deployUrl === undefined ? "https://toolshare.pages.dev" : o.deployUrl;
+      const url = o.deployUrl === undefined ? "https://toolshare.example" : o.deployUrl;
       return {
         deploy: { target: "cloudflare-pages", environment: "preview", ...(url ? { url } : {}), version: "0.1.0", status: url ? "deployed" : "failed", rollbackVerified: !!url, notes: url ? "deployed" : "no deploy adapter ran" },
         summary: { headline: "ToolShare is live", whatItDoes: "Neighbours list and borrow tools.", howToUse: "Open the link and add a tool.", whatWasParked: [] },

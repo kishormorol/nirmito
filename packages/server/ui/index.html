@@ -162,7 +162,7 @@ li.fail { color: var(--bad); }
 .decisions li { display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; border-radius: 12px; background: var(--surface-2); }
 .decisions .topic { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
 .decisions .was { text-decoration: line-through; color: var(--muted); font-size: 14px; }
-.linkbtn { border: 0; background: none; color: var(--accent); padding: 0; font-size: 14px; align-self: flex-start; }
+.linkbtn { border: 0; background: none; color: var(--accent); padding: 0; font-size: 14px; align-self: flex-start; min-height: 32px; }
 .linkbtn.subtle { color: var(--muted); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; min-height: 32px; }
 .inline-form { display: flex; gap: 6px; }
 .inline-form input { flex: 1; min-width: 0; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; background: var(--surface); }
@@ -372,7 +372,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       fixRound: "Thanks. A fix round has started.", onList: "Thanks. It's on the list for the next fix round.", already: "That's already on the list.", tryingAgain: "Trying again.",
       cantLoad: "Could not load that project.", loading: "Loading…", noProjects: "No projects yet.", cantReach: "Can't reach Karigor",
       tierNames: { free: "free", cheap: "cheap", best: "best" },
-      emailTitle: "Sign in to Karigor", emailText: "Give your email and we send you a link that signs you in. No password to remember. New here? The same link makes your account.", emailLabel: "Your email", emailSend: "Send my link", emailSent: (e) => `Check ${e} for a sign-in link. It works once, for 15 minutes.`, linkExpired: "That sign-in link was already used or is too old. Ask for a new one.",
+      emailTitle: "Sign in to Karigor", emailText: "Give your email and we send you a link that signs you in. No password to remember. New here? The same link makes your account.", emailLabel: "Your email", emailSend: "Send my link", emailSent: (e) => `Check ${e} for a sign-in link. It works once, for 15 minutes.`, emailAgain: "No email? Send again, or use another address", linkExpired: "That sign-in link was already used or is too old. Ask for a new one.",
       changeByPointing: "Change it by pointing", pointAndChange: "Point and change",
       previewHelp: "Click a part to pick it. Drag a card, row or field to move it. Double-click words to change them. Drop a photo on a part to use it there. Nothing changes until you send.",
       pickedPart: (d) => `Picked: ${d}`, moveUp: "Move up", moveDown: "Move down", removeIt: "Remove it", whatChange: "What should change here?", addChange: "Add",
@@ -429,7 +429,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       fixRound: "ধন্যবাদ। একটি ঠিক করার রাউন্ড শুরু হয়েছে।", onList: "ধন্যবাদ। পরের ঠিক করার রাউন্ডের তালিকায় রাখা হলো।", already: "এটি আগেই তালিকায় আছে।", tryingAgain: "আবার চেষ্টা করা হচ্ছে।",
       cantLoad: "প্রকল্পটি খোলা যায়নি।", loading: "খোলা হচ্ছে…", noProjects: "এখনো কোনো প্রকল্প নেই।", cantReach: "Karigor-এর সঙ্গে যোগাযোগ করা যাচ্ছে না",
       tierNames: { free: "বিনা খরচের", cheap: "সস্তা", best: "সেরা" },
-      emailTitle: "Karigor-এ সাইন ইন করুন", emailText: "আপনার ইমেইল দিন, আমরা সাইন ইন করার একটি লিংক পাঠাব। কোনো পাসওয়ার্ড মনে রাখতে হবে না। নতুন? একই লিংকে আপনার অ্যাকাউন্ট তৈরি হবে।", emailLabel: "আপনার ইমেইল", emailSend: "লিংক পাঠান", emailSent: (e) => `${e} ঠিকানায় সাইন ইন লিংক দেখুন। এটি একবার, ১৫ মিনিটের জন্য কাজ করে।`, linkExpired: "এই সাইন ইন লিংকটি আগেই ব্যবহার হয়েছে বা অনেক পুরোনো। নতুন একটি চান।",
+      emailAgain: "ইমেইল পাননি? আবার পাঠান, অথবা অন্য ঠিকানা দিন", emailTitle: "Karigor-এ সাইন ইন করুন", emailText: "আপনার ইমেইল দিন, আমরা সাইন ইন করার একটি লিংক পাঠাব। কোনো পাসওয়ার্ড মনে রাখতে হবে না। নতুন? একই লিংকে আপনার অ্যাকাউন্ট তৈরি হবে।", emailLabel: "আপনার ইমেইল", emailSend: "লিংক পাঠান", emailSent: (e) => `${e} ঠিকানায় সাইন ইন লিংক দেখুন। এটি একবার, ১৫ মিনিটের জন্য কাজ করে।`, linkExpired: "এই সাইন ইন লিংকটি আগেই ব্যবহার হয়েছে বা অনেক পুরোনো। নতুন একটি চান।",
       changeByPointing: "দেখিয়ে বদলান", pointAndChange: "দেখিয়ে বদলান",
       previewHelp: "কোনো অংশ বাছতে তাতে ক্লিক করুন। কার্ড, সারি বা ঘর সরাতে টেনে নিন। লেখা বদলাতে দুবার ক্লিক করুন। কোনো অংশে ছবি ছেড়ে দিলে সেখানে সেই ছবি বসবে। পাঠানোর আগে কিছুই বদলায় না।",
       pickedPart: (d) => `বাছা হয়েছে: ${d}`, moveUp: "ওপরে সরান", moveDown: "নিচে সরান", removeIt: "সরিয়ে দিন", whatChange: "এখানে কী বদলাবে?", addChange: "যোগ করুন",
@@ -713,7 +713,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       catch (err) { hint.textContent = err.message; start.disabled = false; }
     });
     if (p.status === "none") box.append(el("p", { class: "meta" }, t("phoneText")), el("div", { class: "row" }, start));
-    else if (p.status === "building") box.append(el("p", {}, t("phoneBuilding")), runLink ? el("a", { href: runLink, target: "_blank", rel: "noopener noreferrer" }, t("phoneWatch")) : null);
+    else if (p.status === "building") box.append(el("p", {}, t("phoneBuilding")), ...(runLink ? [el("a", { href: runLink, target: "_blank", rel: "noopener noreferrer" }, t("phoneWatch"))] : []));
     else {
       if (p.status === "failed") box.append(el("p", {}, `${t("phoneFailed")} ${p.error || ""}`));
       if (p.files && p.files.length) {
@@ -981,11 +981,11 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
       e.preventDefault();
       try {
         await api("/api/signin/email", { method: "POST", body: JSON.stringify({ email: email.value, lang }) });
-        card.replaceChildren(el("h2", {}, t("emailTitle")), el("p", {}, t("emailSent", email.value.trim())));
+        card.replaceChildren(el("h2", {}, t("emailTitle")), el("p", {}, t("emailSent", email.value.trim())), el("button", { class: "linkbtn", type: "button", onclick: emailSignIn }, t("emailAgain")));
       } catch (err) { problem.textContent = err.message; }
     } }, el("label", { class: "field", style: "flex:1;min-width:0" }, t("emailLabel"), email), el("button", { class: "btn", style: "align-self:flex-end" }, t("emailSend")));
     const expired = new URLSearchParams(location.search).has("expired");
-    card.append(el("h2", {}, t("emailTitle")), expired ? el("p", { class: "banner" }, t("linkExpired")) : null, el("p", {}, t("emailText")), form, problem);
+    card.append(el("h2", {}, t("emailTitle")), ...(expired ? [el("p", { class: "banner" }, t("linkExpired"))] : []), el("p", {}, t("emailText")), form, problem);
     main.replaceChildren(card);
     email.focus();
   }

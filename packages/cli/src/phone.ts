@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
-import { chmod, mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
+import { mkdir, readFile, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
-import { ignoreInProjectGit } from "@karigor/store";
+import { ignoreInProjectGit, ownerOnly } from "@karigor/store";
 import { packageIdFor, phoneFiles, safeColor, type PhoneAppInfo } from "./phone-files.js";
 
 export * from "./phone-files.js";
@@ -100,7 +100,8 @@ export async function signingKey(projectDir: string, name: string, exec: PhoneEx
     await rm(key, { force: true });
     if (p12.code !== 0) throw new Error(`could not make the signing key: ${p12.stderr.trim().split("\n").at(-1)}`);
     await writeFile(pwFile, password, { mode: 0o600 });
-    await chmod(file, 0o600);
+    await ownerOnly(pwFile);
+    await ownerOnly(file);
   }
   const password = (await readFile(pwFile, "utf8")).trim();
   const fp = await exec("openssl", ["x509", "-in", join(dir, "upload.crt"), "-noout", "-fingerprint", "-sha256"], { cwd: dir });

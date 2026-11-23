@@ -1,4 +1,4 @@
-import { execFile } from "node:child_process";
+import { start, stopTree } from "@karigor/store";
 import type { CommandResult, UrlCheck } from "@karigor/gates";
 import { TARGET_SETTINGS, readSettings, requiredSettings, toMissing, type MissingSetting } from "@karigor/profiles";
 import type { DeployAdapter, DeployRequest, DeployResult, LiveRelease } from "./types.js";
@@ -7,14 +7,28 @@ export type VercelExec = (file: string, args: string[], opts: { cwd: string; tim
 
 export const defaultExec: VercelExec = (file, args, { cwd, timeoutMs, env, input }) =>
   new Promise((resolve) => {
-    const child = execFile(file, args, { cwd, timeout: timeoutMs, env, maxBuffer: 32 * 1024 * 1024 }, (err, stdout, stderr) => {
-      const e = err as (Error & { code?: unknown; killed?: boolean }) | null;
-      if (e?.killed) return resolve({ stdout: String(stdout), stderr: `${String(stderr)}\n(timed out)`, code: null });
-      if (e && typeof e.code !== "number") return resolve({ stdout: String(stdout), stderr: `${String(stderr)}\n${e.message}`, code: 127 });
-      resolve({ stdout: String(stdout), stderr: String(stderr), code: e ? (e.code as number) : 0 });
+    const child = start(file, args, { cwd, env, stdio: ["pipe", "pipe", "pipe"] });
+    let stdout = "";
+    let stderr = "";
+    let timedOut = false;
+    const timer = setTimeout(() => {
+      timedOut = true;
+      stopTree(child, "SIGTERM", false);
+    }, timeoutMs);
+    child.stdout!.setEncoding("utf8").on("data", (d: string) => (stdout += d));
+    child.stderr!.setEncoding("utf8").on("data", (d: string) => (stderr += d));
+    child.on("error", (e) => {
+      clearTimeout(timer);
+      resolve({ stdout, stderr: `${stderr}\n${e.message}`, code: 127 });
     });
+    child.on("close", (code) => {
+      clearTimeout(timer);
+      resolve(timedOut ? { stdout, stderr: `${stderr}\n(timed out)`, code: null } : { stdout, stderr, code: code ?? 127 });
+    });
+    // A program that is missing or stops early closes its input; that is reported above, not here.
+    child.stdin!.on("error", () => {});
     // Values go in on stdin, never as arguments (other users can read a process's arguments).
-    child.stdin?.end(input ?? "");
+    child.stdin!.end(input ?? "");
   });
 
 export interface VercelDeployOptions {

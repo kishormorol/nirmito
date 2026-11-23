@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { start, stopTree } from "@karigor/store";
 
 export interface ExecResult {
   stdout: string;
@@ -30,15 +30,10 @@ export function run(cmd: string, args: string[], opts: ExecOptions): Promise<Exe
     let stderr = "";
     let timedOut = false;
     let done = false;
-    const child = spawn(cmd, args, { cwd: opts.cwd, env: { ...process.env, ...opts.env, CI: "1" }, detached: group, stdio: ["ignore", "pipe", "pipe"] });
+    const child = start(cmd, args, { cwd: opts.cwd, env: { ...process.env, ...opts.env, CI: "1" }, detached: group, stdio: ["ignore", "pipe", "pipe"] });
     const stop = (signal: NodeJS.Signals) => {
-      try {
-        // The whole group: a package manager's children (a browser, a server) must not outlive it.
-        if (group && child.pid) process.kill(-child.pid, signal);
-        else child.kill(signal);
-      } catch {
-        /* already gone */
-      }
+      // The whole tree: a package manager's children (a browser, a server) must not outlive it.
+      stopTree(child, signal);
     };
     let hard: ReturnType<typeof setTimeout> | undefined;
     const timer = setTimeout(() => {

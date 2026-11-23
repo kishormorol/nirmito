@@ -13,7 +13,7 @@ interface PwSpec {
   title: string;
   file?: string;
   ok?: boolean;
-  tests?: { status?: string; results?: PwResult[] }[];
+  tests?: { status?: string; projectName?: string; results?: PwResult[] }[];
 }
 interface PwSuite {
   title?: string;
@@ -48,17 +48,18 @@ export function parsePlaywrightJson(report: string): JourneyCounts {
   const walk = (suite: PwSuite, trail: string[]) => {
     const here = suite.title && !suite.title.endsWith(".ts") ? [...trail, suite.title] : trail;
     for (const spec of suite.specs ?? []) {
-      const skipped = (spec.tests ?? []).every((t) => t.status === "skipped");
-      if (skipped) continue;
-      if (spec.ok) {
-        out.passed += 1;
-        continue;
-      }
-      out.failed += 1;
-      const result = (spec.tests ?? []).flatMap((t) => t.results ?? []).find((r) => r.status !== "passed" && r.status !== "skipped");
+      // One journey is listed once with a test per screen size (older versions list it once per size); each is a run.
+      const runs = (spec.tests ?? []).filter((t) => t.status !== "skipped");
+      const bad = runs.filter((t) => t.status !== "expected" && t.status !== "flaky");
+      out.passed += runs.length - bad.length;
+      out.failed += bad.length;
+      if (!bad.length) continue;
+      const result = bad.flatMap((t) => t.results ?? []).find((r) => r.status !== "passed" && r.status !== "skipped");
+      // Which size failed matters when the other one passed.
+      const sizes = bad.length < runs.length ? bad.map((t) => t.projectName).filter(Boolean).join(", ") : "";
       const message = plain(result?.error?.message ?? result?.errors?.[0]?.message ?? result?.status ?? "failed").split("\n").find((l) => l.trim()) ?? "failed";
       const where = stuckAt([...(result?.error ? [result.error] : []), ...(result?.errors ?? [])]);
-      out.failures.push(`${spec.file ?? suite.file ?? ""} › ${[...here, spec.title].join(" › ")}: ${message.trim().slice(0, 300)}${where.slice(0, 200)}`);
+      out.failures.push(`${spec.file ?? suite.file ?? ""} › ${[...here, spec.title].join(" › ")}${sizes ? ` (${sizes} only)` : ""}: ${message.trim().slice(0, 300)}${where.slice(0, 200)}`);
     }
     for (const s of suite.suites ?? []) walk(s, here);
   };
