@@ -56,7 +56,8 @@
   --warn: #ffb86b; --warn-soft: #3a2a14; --bad: #f28b82; --bad-soft: #3d1d1b; --mine: #e8e9ec; --mine-text: #0e1116; --shadow: none;
 }
 * { box-sizing: border-box; }
-html, body { height: 100%; }
+html { height: 100%; }
+body { min-height: 100%; } /* taller than the screen in a long chat, so the header stays on top */
 body {
   margin: 0;
   background: var(--bg);
@@ -222,7 +223,7 @@ dialog::backdrop { background: rgba(0,0,0,.35); }
 </head>
 <body>
 <header>
-  <div class="brand"><div class="mark" aria-hidden="true">K</div><span>Nirmito</span></div>
+  <div class="brand"><div class="mark" aria-hidden="true">N</div><span>Nirmito</span></div>
   <div class="title" id="title"></div>
   <button class="chip" id="cost" hidden></button>
   <button class="chip" id="credit" type="button" hidden></button>
