@@ -5,7 +5,7 @@
 <p align="center">
   <img src="docs/media/nirmito-demo.gif" width="720" alt="Nirmito's chat page: an idea for a tool-lending site is typed in, Nirmito reports writing the spec, designing, planning, building and putting it online, then shows it is live">
   <br>
-  <sub>A run in the chat UI on the free <code>demo</code> adapter (no model, no cost: the steps are real, the work is pretend). Website: <a href="https://karigor-ten.vercel.app">karigor-ten.vercel.app</a></sub>
+  <sub>A run in the chat UI on the free <code>demo</code> adapter (no model, no cost: the steps are real, the work is pretend). Website: <a href="https://nirmito.org">nirmito.org</a></sub>
 </p>
 
 Plenty of tools generate code from a prompt. Nirmito is different in two ways:
