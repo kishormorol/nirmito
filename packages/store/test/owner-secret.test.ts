@@ -15,6 +15,8 @@ describe("the owner secret Karigor keeps", () => {
     // a project from before the rule already tracks it
     await writeFile(join(dir, "owner-link-secret"), "old");
     await gitCommitter.commit(dir, "before");
+    // someone else let in on the file itself, which turning inheritance off does not undo
+    if (process.platform === "win32") await run(join(process.env["SystemRoot"]!, "System32", "icacls.exe"), [join(dir, "owner-link-secret"), "/grant", "*S-1-5-32-545:F"]);
     await keepOwnerSecret(dir, { OWNER_LINK_SECRET: "s3cret", OTHER: "x" });
     expect(await ownerSecret(dir)).toBe("s3cret");
     if (process.platform === "win32") {

@@ -51,7 +51,11 @@ function mySid(): Promise<string> {
  */
 export async function ownerOnly(file: string): Promise<void> {
   if (!WINDOWS) return chmod(file, 0o600);
-  await exec(system32("icacls.exe"), [file, "/inheritance:r", "/grant:r", `*${await mySid()}:F`], { windowsHide: true }).catch((e: Error & { stderr?: string }) => {
+  const icacls = (...args: string[]) => exec(system32("icacls.exe"), [file, ...args], { windowsHide: true });
+  const me = `*${await mySid()}:F`;
+  // Entries set on the file itself outlive "/inheritance:r" (some computers give new files SYSTEM and
+  // Administrators that way), so they are cleared first.
+  await icacls("/reset").then(() => icacls("/inheritance:r", "/grant:r", me)).catch((e: Error & { stderr?: string }) => {
     throw new Error(`could not make ${file} private: ${e.stderr?.trim() || e.message}`);
   });
 }
