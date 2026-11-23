@@ -166,8 +166,8 @@ describe("server", { timeout: 180_000 }, () => {
     const k = createKarigorServer({ root: first.root, adapter: "demo", resumeEveryMs: 50 });
     open.push(k);
     const deadline = Date.now() + 60_000;
-    while (!k.runs.has(id) && Date.now() < deadline) await new Promise((r) => setTimeout(r, 25));
-    expect(k.runs.has(id)).toBe(true);
+    // The outcome, not the run itself: on a fast computer it is over between two looks.
+    while ((await store.replay()).status !== "finished" && Date.now() < deadline) await new Promise((r) => setTimeout(r, 50));
     await k.idle();
     expect((await store.replay()).status).toBe("finished");
   });

@@ -151,6 +151,18 @@ describe("settings from .env.example", () => {
   });
 });
 
+describe("the package manager", () => {
+  it("is the same version in every app as in Karigor: newer pnpm refuses installs and ignores the security overrides", async () => {
+    const pinned = (dir: string) => readFile(dir, "utf8").then((t) => (JSON.parse(t) as { packageManager?: string }).packageManager);
+    const karigor = await pinned(new URL("../../../package.json", import.meta.url).pathname.replace(/^\/(?=[A-Za-z]:)/, ""));
+    for (const p of [webApp, staticSite, api]) {
+      const dir = await mkdtemp(join(tmpdir(), "karigor-pm-"));
+      await p.scaffold(dir);
+      expect(await pinned(join(dir, "package.json")), p.name).toBe(karigor);
+    }
+  });
+});
+
 describe("Playwright reports", () => {
   it("counts journeys, names failing ones with their first error line, and reports a config error", () => {
     const report = JSON.stringify({

@@ -1,6 +1,7 @@
 {
   "name": "karigor-static-site",
   "private": true,
+  "packageManager": "pnpm@10.34.7",
   "version": "0.1.0",
   "type": "module",
   "scripts": {

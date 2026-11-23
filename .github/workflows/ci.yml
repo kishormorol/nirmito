@@ -32,8 +32,11 @@ jobs:
         run: |
           docker run --rm karigor sh -ec '
             cp -r packages/profiles/scaffolds/web-app /tmp/app && cd /tmp/app
-            CI=1 pnpm install --silent && pnpm exec playwright install chromium
-            CI=1 pnpm build && CI=1 pnpm e2e'
+            export CI=1
+            pnpm install --silent
+            pnpm exec playwright install chromium
+            pnpm build
+            pnpm e2e'
   windows:
     runs-on: windows-latest
     steps:
